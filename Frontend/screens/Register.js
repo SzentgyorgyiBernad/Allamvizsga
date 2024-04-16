@@ -1,13 +1,5 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  Keyboard,
-  KeyboardAvoidingView,
-} from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, ScrollView, Pressable } from "react-native";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../constants/colors";
 import CustomTextInput from "../components/CustomTextInput";
@@ -29,13 +21,13 @@ const Register = ({ navigation }) => {
       validEmail = false;
     } else if (!inputs.email.match(/\S+@\S+\.\S+/)) {
       handleError("Please input a valid email!", "email");
-    }
+    } else handleError("", "email");
 
     if (!inputs.password) {
       handleError("Please input a password!", "password");
     } else if (inputs.password.length < 7) {
       handleError("The password is to short", "password");
-    }
+    } else handleError("", "password");
     return validEmail;
   };
 
@@ -43,18 +35,23 @@ const Register = ({ navigation }) => {
     if (!validate()) {
       return;
     }
-    // console.log(inputs.email, inputs.password);
 
     try {
-      const response = await fetch("http://192.168.0.100:8000/register", {
+      const response = await fetch("http://192.168.0.191:8000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(inputs),
       });
-
       const data = await response.json();
+      if (!response.ok) {
+        console.log(data);
+        handleError(data.error, "email");
+        return;
+      }
+      handleError("", "email");
+      navigation.navigate("Login");
     } catch (error) {
       console.log(error);
     }
