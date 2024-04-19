@@ -1,71 +1,18 @@
 import { View, Text, ScrollView, Pressable } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import COLORS from "../constants/colors";
-import CustomTextInput from "../components/CustomTextInput";
-import Button from "../components/Button";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import COLORS from "../../constants/colors";
+import CustomTextInput from "../../components/CustomTextInput";
+import Button from "../../components/Button";
+import { useLoginScreenLogic } from "../LoginScreen/LoginScreen.Logic";
 
-const Login = ({ navigation }) => {
-  const [inputs, setInputs] = React.useState({
-    email: "",
-    password: "",
-  });
+export default Login = ({ navigation }) => {
+  const { email, setEmail, password, setPassword, handleLogin } =
+    useLoginScreenLogic();
   const [errors, setErrors] = React.useState({});
-
-  const handleOnChange = (text, input) => {
-    setInputs((prevState) => ({ ...prevState, [input]: text }));
-  };
 
   const handleError = (errorMessage, input) => {
     setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
-  };
-
-  const login = async () => {
-    try {
-      const response = await fetch("http://192.168.0.191:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputs),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        handleError(data.error, "password");
-      }
-      storeData(data.token);
-      navigation.navigate("Menu");
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
-
-  const storeData = async (value) => {
-    try {
-      await AsyncStorage.setItem("token", value);
-    } catch (error) {
-      console.error("Hiba történt az adatok tárolása közben:", e);
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("token");
-
-      console.log("amit kap", value);
-      if (value !== null) {
-        return value;
-      } else {
-        console.log("Nincs érték a megadott kulcshoz.");
-        return null;
-      }
-    } catch (e) {
-      console.error("Hiba történt az adatok kiolvasása közben:", e);
-      return null;
-    }
   };
 
   return (
@@ -119,10 +66,10 @@ const Login = ({ navigation }) => {
                   label="Email"
                   placeholder="Enter your email"
                   error={errors.email}
+                  onChangeText={setEmail}
                   onFocus={() => {
                     handleError(null, "email");
                   }}
-                  onChangeText={(text) => handleOnChange(text, "email")}
                 ></CustomTextInput>
 
                 <CustomTextInput
@@ -134,7 +81,7 @@ const Login = ({ navigation }) => {
                     handleError(null, "email");
                   }}
                   password
-                  onChangeText={(text) => handleOnChange(text, "password")}
+                  onChangeText={setPassword}
                 ></CustomTextInput>
               </View>
 
@@ -144,7 +91,7 @@ const Login = ({ navigation }) => {
                   backgroundColor: COLORS.primary,
                   color: COLORS.primary,
                 }}
-                onPress={login}
+                onPress={handleLogin}
               />
               <View
                 style={{
@@ -176,5 +123,3 @@ const Login = ({ navigation }) => {
     </LinearGradient>
   );
 };
-
-export default Login;

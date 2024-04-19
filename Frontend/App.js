@@ -1,14 +1,17 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native";
 import { RootNavigation } from "./Navigation/RootNavigation";
+import { Provider } from "react-redux";
+import { store } from "./Redux/store";
 
 export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <RootNavigation />
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <RootNavigation />
+        </NavigationContainer>
+      </Provider>
     </SafeAreaView>
   );
 }

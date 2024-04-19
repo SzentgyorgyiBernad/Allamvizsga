@@ -5,7 +5,7 @@ export const HomeStack = () => {
   const Stack = createNativeStackNavigator();
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen component={Menu} name="Menu" />
     </Stack.Navigator>
   );

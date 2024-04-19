@@ -6,16 +6,15 @@ import { AuthStack } from "./StackNavigation/AuthStack";
 
 export const RootNavigation = () => {
   const [loading, setLoading] = useState(false);
-
+  // const [email, setEmail] = useState("");
   const [token, setToken] = useState(undefined);
 
   useEffect(() => {
     const getToken = async () => {
       setLoading(true);
-      // await AsyncStorae.clear();
 
       const token = await AsyncStorage.getItem("token");
-      console.log(token);
+      // console.log(token);
       setLoading(false);
       setToken(token);
       return token;

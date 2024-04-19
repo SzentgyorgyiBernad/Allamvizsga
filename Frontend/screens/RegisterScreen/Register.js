@@ -1,9 +1,9 @@
 import { View, Text, ScrollView, Pressable } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import COLORS from "../constants/colors";
-import CustomTextInput from "../components/CustomTextInput";
-import Button from "../components/Button";
+import COLORS from "../../constants/colors";
+import CustomTextInput from "../../components/CustomTextInput";
+import Button from "../../components/Button";
 
 const Register = ({ navigation }) => {
   const [inputs, setInputs] = React.useState({
