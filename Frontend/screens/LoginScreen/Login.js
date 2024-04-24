@@ -5,6 +5,7 @@ import COLORS from "../../constants/colors";
 import CustomTextInput from "../../components/CustomTextInput";
 import Button from "../../components/Button";
 import { useLoginScreenLogic } from "../LoginScreen/LoginScreen.Logic";
+import MyCard from "../../components/Molecules/MyCard";
 
 export default Login = ({ navigation }) => {
   const { email, setEmail, password, setPassword, handleLogin } =
@@ -20,19 +21,12 @@ export default Login = ({ navigation }) => {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
+          marginTop: 64,
           alignContent: "center",
         }}
       >
-        <View
-          style={{
-            borderWidth: 1,
-            borderRadius: 20,
-            borderColor: COLORS.black,
-            backgroundColor: COLORS.white,
-            marginHorizontal: 16,
-            paddingVertical: 24,
-          }}
+        <MyCard
+          style={{ marginHorizontal: 16, paddingTop: 24, paddingBottom: 46 }}
         >
           <ScrollView
             style={{
@@ -66,10 +60,11 @@ export default Login = ({ navigation }) => {
                   label="Email"
                   placeholder="Enter your email"
                   error={errors.email}
-                  onChangeText={setEmail}
+                  onChangetext={setEmail}
                   onFocus={() => {
                     handleError(null, "email");
                   }}
+                  value={email}
                 ></CustomTextInput>
 
                 <CustomTextInput
@@ -77,11 +72,12 @@ export default Login = ({ navigation }) => {
                   label="Password"
                   placeholder="Enter your password"
                   error={errors.password}
+                  onChangetext={setPassword}
                   onFocus={() => {
                     handleError(null, "email");
                   }}
                   password
-                  onChangeText={setPassword}
+                  value={password}
                 ></CustomTextInput>
               </View>
 
@@ -90,6 +86,7 @@ export default Login = ({ navigation }) => {
                 style={{
                   backgroundColor: COLORS.primary,
                   color: COLORS.primary,
+                  marginTop: 24,
                 }}
                 onPress={handleLogin}
               />
@@ -118,7 +115,7 @@ export default Login = ({ navigation }) => {
               </View>
             </View>
           </ScrollView>
-        </View>
+        </MyCard>
       </View>
     </LinearGradient>
   );

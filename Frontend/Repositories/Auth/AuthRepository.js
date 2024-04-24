@@ -2,6 +2,7 @@ import BaseRepository from "../BaseRepository";
 
 export default class AuthRepository extends BaseRepository {
   async login(body) {
+    // console.log("AuthRep login", body);
     return await this.api.post("auth/login", { body });
   }
 

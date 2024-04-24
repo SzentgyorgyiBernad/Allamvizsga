@@ -13,16 +13,19 @@ export default class ApiService {
   }
 
   async fetchData(endPoint, method, options) {
+    // console.log("Api fetch:", this.baseUrl, endPoint, method, options);
+    // console.log(JSON.stringify(options?.body));
     try {
-      const response = await fetch("${this.baseUrl}/${endPoint}", {
+      const response = await fetch(`${this.baseUrl}/${endPoint}`, {
         method,
         headers: {
           "Content-type": "application/json",
-          Authorization: options?.token ? "Bearer ${options.token}" : "",
+          Authorization: options?.token ? `Bearer ${options.token}` : "",
         },
         body: JSON.stringify(options?.body),
       });
-
+      // console.log("resp");
+      // console.log(JSON.stringify(response));
       if (!response.ok) {
         return null;
       }
@@ -40,6 +43,7 @@ export default class ApiService {
   }
 
   async post(endPoint, options) {
+    // console.log("ApiService login asd");
     return await this.fetchData(endPoint, "POST", options);
   }
 }

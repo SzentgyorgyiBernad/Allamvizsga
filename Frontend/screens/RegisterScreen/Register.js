@@ -4,66 +4,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../constants/colors";
 import CustomTextInput from "../../components/CustomTextInput";
 import Button from "../../components/Button";
+import { useRegisterScreenLogic } from "./RegisterScreen.Logic";
 
 const Register = ({ navigation }) => {
-  const [inputs, setInputs] = React.useState({
-    email: "",
-    password: "",
-  });
-
-  const [errors, setErrors] = React.useState({});
-
-  const validate = () => {
-    let validEmail = true;
-    // Keyboard.dismiss();
-    if (!inputs.email) {
-      handleError("Please input your email!", "email");
-      validEmail = false;
-    } else if (!inputs.email.match(/\S+@\S+\.\S+/)) {
-      handleError("Please input a valid email!", "email");
-    } else handleError("", "email");
-
-    if (!inputs.password) {
-      handleError("Please input a password!", "password");
-    } else if (inputs.password.length < 7) {
-      handleError("The password is to short", "password");
-    } else handleError("", "password");
-    return validEmail;
-  };
-
-  const register = async () => {
-    if (!validate()) {
-      return;
-    }
-
-    try {
-      const response = await fetch("http://192.168.0.191:8000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputs),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        console.log(data);
-        handleError(data.error, "email");
-        return;
-      }
-      handleError("", "email");
-      navigation.navigate("Login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleOnChange = (text, input) => {
-    setInputs((prevState) => ({ ...prevState, [input]: text }));
-  };
-
-  const handleError = (errorMessage, input) => {
-    setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
-  };
+  const { email, setEmail, password, setPassword, error, handleRegister } =
+    useRegisterScreenLogic();
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={[COLORS.primary, COLORS.black]}>
@@ -115,23 +60,22 @@ const Register = ({ navigation }) => {
                   iconName="email-outline"
                   label="Email"
                   placeholder="Enter your email"
-                  error={errors.email}
-                  onFocus={() => {
-                    handleError(null, "email");
-                  }}
-                  onChangeText={(text) => handleOnChange(text, "email")}
+                  error={error.email}
+                  // onFocus={() => {
+                  //   handleError(null, "email");
+                  // }}
+                  onChangetext={setEmail}
+                  value={email}
                 ></CustomTextInput>
 
                 <CustomTextInput
                   iconName="lock-outline"
                   label="Password"
                   placeholder="Enter your password"
-                  error={errors.password}
-                  onFocus={() => {
-                    handleError(null, "email");
-                  }}
+                  error={error.password}
                   password
-                  onChangeText={(text) => handleOnChange(text, "password")}
+                  onChangetext={setPassword}
+                  value={password}
                 ></CustomTextInput>
               </View>
 
@@ -141,7 +85,7 @@ const Register = ({ navigation }) => {
                   backgroundColor: COLORS.primary,
                   color: COLORS.primary,
                 }}
-                onPress={register}
+                onPress={handleRegister}
               />
               <View
                 style={{

@@ -4,15 +4,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../constants/colors";
 import Button from "../../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const logout = async () => {
-  console.log("Logout");
-  await AsyncStorage.removeItem("token");
-  await AsyncStorage.removeItem("email");
-  console.log(AsyncStorage.getItem("token"));
-};
+import { useAppDispatch } from "../../Hooks/hooks";
+import { logout } from "../../Redux/Auth/AuthSlice";
 
 const Menu = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    // console.log("Logout");
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("email");
+    dispatch(logout());
+    // console.log(AsyncStorage.getItem("token"));
+  };
+
   return (
     <LinearGradient style={{ flex: 1 }} colors={[COLORS.primary, COLORS.black]}>
       <View style={{ flex: 1 }}>
@@ -21,7 +26,7 @@ const Menu = ({ navigation }) => {
           <Button
             title="Log out"
             style={{ color: COLORS.primary }}
-            onPress={logout}
+            onPress={handleLogout}
           />
         </View>
       </View>
