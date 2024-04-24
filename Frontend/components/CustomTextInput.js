@@ -2,16 +2,18 @@ import { View, Text, TextInput } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../constants/colors";
+import Label from "./Atoms/Label";
+import MyInput from "./Molecules/MyInput";
 
 const CustomTextInput = ({
   label,
   error,
   iconName,
   password,
-  onFocus = () => {},
+  onChangetext,
+  value,
   ...props
 }) => {
-  const [isFocused, setIsFocused] = React.useState(false);
   const [hidePassword, setHidePassword] = React.useState(password);
 
   return (
@@ -19,6 +21,7 @@ const CustomTextInput = ({
       <Text style={{ marginLeft: 10, fontSize: 18, color: COLORS.primary }}>
         {label}
       </Text>
+
       <View
         style={{
           height: 40,
@@ -45,13 +48,10 @@ const CustomTextInput = ({
           secureTextEntry={hidePassword}
           {...props}
           placeholderTextColor={COLORS.grey}
-          onFocus={() => {
-            onFocus();
-            setIsFocused(true);
+          onChangeText={(text) => {
+            onChangetext(text);
           }}
-          onBlur={() => {
-            setIsFocused(false);
-          }}
+          value={value}
         ></TextInput>
         {password && (
           <Icon

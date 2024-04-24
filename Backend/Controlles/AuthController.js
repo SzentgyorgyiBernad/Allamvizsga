@@ -1,22 +1,24 @@
-const { PrismaClient, Prisma } = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
+const jwt = require("jsonwebtoken");
+// const { userExists, userFromDb, getUser } = require("../Models/UserModel");
 
 const prisma = new PrismaClient();
 
 module.exports = class AuthController {
   async register(req, res) {
-    console.log(req.body);
+    console.log("Backend register");
     try {
       const { email, password } = req.body;
-      //Checking the email to see if it is already in the database
-      const existinguser = await prisma.user.findUnique({
-        where: { email },
-      });
-      console.log(existinguser);
 
-      //Returning with if it exist
-      if (existinguser) {
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (existingUser) {
         return res.status(400).json({ error: "Email is already registered!" });
       }
 
@@ -24,7 +26,6 @@ module.exports = class AuthController {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       //Creating new user
-
       const newId = uuidv4();
 
       const newUser = await prisma.user.create({
@@ -34,9 +35,47 @@ module.exports = class AuthController {
           password: hashedPassword,
         },
       });
-
-      res.status(200).json({ message: "User registered successfully" });
+      // Token
+      const token = jwt.sign({ userId: newId }, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
+      res.status(200).json({ token: token, email: email });
     } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async login(req, res) {
+    // console.log(req);
+    // console.log("Be van loginolva");
+    try {
+      const { email, password } = req.body;
+      console.log(email, password);
+      const userFromDb = await prisma.user.findFirstOrThrow({
+        where: {
+          email: email,
+        },
+      });
+      console.log(userFromDb);
+      if (!userFromDb) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      // console.log(userFromDb.password);
+      // console.log(password);
+      const passwordMatch = await bcrypt.compare(password, userFromDb.password);
+      // console.log("ma", passwordMatch);
+      if (!passwordMatch) {
+        res.status(401).json({ error: "Invalid email or password!" });
+      }
+      const token = jwt.sign(
+        { userId: userFromDb.id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+      // console.log("Token: ", token);
+      res.status(200).json({ token: token, email: email });
+    } catch (error) {
+      // console.log(JSON.stringify(error));
       res.status(500).json({ error: "Internal server error" });
     }
   }
