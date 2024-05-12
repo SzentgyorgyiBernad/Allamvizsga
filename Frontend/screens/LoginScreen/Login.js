@@ -8,13 +8,9 @@ import { useLoginScreenLogic } from "../LoginScreen/LoginScreen.Logic";
 import MyCard from "../../components/Molecules/MyCard";
 
 export default Login = ({ navigation }) => {
-  const { email, setEmail, password, setPassword, handleLogin } =
+  const { email, setEmail, password, setPassword, error, handleLogin } =
     useLoginScreenLogic();
-  const [errors, setErrors] = React.useState({});
-
-  const handleError = (errorMessage, input) => {
-    setErrors((prevState) => ({ ...prevState, [input]: errorMessage }));
-  };
+  // const [errors, setErrors] = useLoginScreenLogic();
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={[COLORS.primary, COLORS.black]}>
@@ -59,11 +55,8 @@ export default Login = ({ navigation }) => {
                   iconName="email-outline"
                   label="Email"
                   placeholder="Enter your email"
-                  error={errors.email}
+                  error={error && error.email}
                   onChangetext={setEmail}
-                  onFocus={() => {
-                    handleError(null, "email");
-                  }}
                   value={email}
                 ></CustomTextInput>
 
@@ -71,11 +64,8 @@ export default Login = ({ navigation }) => {
                   iconName="lock-outline"
                   label="Password"
                   placeholder="Enter your password"
-                  error={errors.password}
+                  // error={errors.password}
                   onChangetext={setPassword}
-                  onFocus={() => {
-                    handleError(null, "email");
-                  }}
                   password
                   value={password}
                 ></CustomTextInput>

@@ -17,11 +17,10 @@ module.exports = class AuthController {
           email: email,
         },
       });
-
       if (existingUser) {
         return res.status(400).json({ error: "Email is already registered!" });
       }
-
+      // console.log("Bejone ide<");
       //Encrypting the password
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -51,19 +50,20 @@ module.exports = class AuthController {
     try {
       const { email, password } = req.body;
       console.log(email, password);
-      const userFromDb = await prisma.user.findFirstOrThrow({
+      const userFromDb = await prisma.user.findFirst({
         where: {
           email: email,
         },
       });
-      console.log(userFromDb);
-      if (!userFromDb) {
-        return res.status(404).json({ error: "User not found" });
+      // console.log("user a dbbol", userFromDb);
+      if (userFromDb == null) {
+        // console.log("Ninsc ilyen user");
+        return res.status(404).json({ error: "Invalid email or password!" });
       }
       // console.log(userFromDb.password);
       // console.log(password);
       const passwordMatch = await bcrypt.compare(password, userFromDb.password);
-      // console.log("ma", passwordMatch);
+      console.log("ma", passwordMatch);
       if (!passwordMatch) {
         res.status(401).json({ error: "Invalid email or password!" });
       }
@@ -75,7 +75,7 @@ module.exports = class AuthController {
       // console.log("Token: ", token);
       res.status(200).json({ token: token, email: email });
     } catch (error) {
-      // console.log(JSON.stringify(error));
+      // console.log(error);
       res.status(500).json({ error: "Internal server error" });
     }
   }

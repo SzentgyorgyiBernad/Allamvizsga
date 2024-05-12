@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { TabNavigation } from "./TabNavigation/TabNavigation";
 import { ActivityIndicator, View } from "react-native";
 import { AuthStack } from "./StackNavigation/AuthStack";
@@ -9,7 +9,6 @@ import { loginSilently } from "../Redux/Auth/AuthSlice";
 export const RootNavigation = () => {
   const authState = useSelector((state) => state.authReducer);
   const userLoading = authState.loading;
-  const userEmail = authState.email;
   const userToken = authState.token;
   const userRegistration = authState.registration;
   const dispatch = useDispatch();
@@ -18,7 +17,7 @@ export const RootNavigation = () => {
   };
 
   useEffect(() => {
-    handleSignInSilently();
+    dispatch(loginSilently());
   }, []);
 
   if (userLoading) {
@@ -34,7 +33,7 @@ export const RootNavigation = () => {
   }
   if (userToken && userRegistration == true) {
     authState.registration = false;
-    console.log("Itt kellene a defaultra dobjon");
+    // console.log("Itt kellene a defaultra dobjon");
     return <Default />;
   }
 

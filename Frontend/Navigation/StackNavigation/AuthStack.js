@@ -14,7 +14,11 @@ export const AuthStack = () => {
         name="Login"
         screenOptions={{ headerShown: false }}
       />
-      <Stack.Screen component={Register} name="Register" />
+      <Stack.Screen
+        component={Register}
+        name="Register"
+        screenOptions={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

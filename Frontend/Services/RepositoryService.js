@@ -1,4 +1,5 @@
 import AuthRepository from "../Repositories/Auth/AuthRepository";
+import InvoiceCreateRepository from "../Repositories/InvoiceCreateRepository/InvoiceCreateRepository";
 
 export default class RepositoryService {
   static instance;
@@ -13,4 +14,5 @@ export default class RepositoryService {
   }
 
   authRepository = new AuthRepository();
+  invoiceCreateRepository = new InvoiceCreateRepository();
 }

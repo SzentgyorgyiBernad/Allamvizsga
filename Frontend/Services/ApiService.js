@@ -26,9 +26,12 @@ export default class ApiService {
       });
       // console.log("resp");
       // console.log(JSON.stringify(response));
+      // console.log("lassuk ok vagy nem", response);
       if (!response.ok) {
-        return null;
+        // console.log(respnse);
+        return response.json();
       }
+      // console.log("ApiService fetch data", response);
       return await response.json();
     } catch (error) {
       console.log("Error while fetching: ", error);
@@ -37,6 +40,7 @@ export default class ApiService {
   }
 
   async get(endPoint, options) {
+    // console.log("ApiService get");
     return await this.fetchData(endPoint, "GET", {
       token: options?.token,
     });

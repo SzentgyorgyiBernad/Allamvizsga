@@ -11,6 +11,8 @@ export const useRegisterScreenLogic = () => {
 
   const [error, setError] = React.useState({});
 
+  const myError = authState.error;
+
   React.useEffect(() => {
     handleError("state", authState.error);
   }, [authState.error]);
@@ -37,6 +39,13 @@ export const useRegisterScreenLogic = () => {
       handleError("password", "The password is to short");
       return;
     } else handleError("password", "");
+
+    if (myError) {
+      handleError("email", myError);
+      // console.log("logic", myError);
+      return;
+    }
+
     // console.log("Logic register");
     dispatch(
       register({

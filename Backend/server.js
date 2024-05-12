@@ -11,17 +11,19 @@ const app = express();
 const router = express.Router();
 
 app.use(express.json());
-
-// app.use(express.urlencoded({ extended: true }));
-
 app.use(express.json());
 app.use(cors());
 
-const AuthController = require("./Controlles/AuthController");
+const AuthController = require("./Controlles/Auth/AuthController");
+const InvoiceController = require("./Controlles/InvoiceCreate/InvoiceCreate");
 const authController = new AuthController();
+const invoiceController = new InvoiceController();
+
 const AuthMiddleware = require("./Middleware/auth");
 
 app.post("/auth/register", authController.register);
 app.post("/auth/login", authController.login);
+
+app.get("/currency/allCurrency", invoiceController.getAllCurrency);
 
 app.listen(8000, () => console.log("The server is running on: 8000"));

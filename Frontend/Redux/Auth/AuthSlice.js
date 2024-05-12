@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import authRepository from "../../Repositories/Auth/AuthRepository";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import RepositoryService from "../../Services/RepositoryService";
 
 const initialState = {
@@ -28,28 +27,39 @@ export const loginSilently = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk("auth/login", async (data) => {
-  const repositoryService = new RepositoryService();
-  const response = await repositoryService.authRepository.login(data);
-  if (response) {
-    await AsyncStorage.setItem("token", response.token);
-    await AsyncStorage.setItem("email", response.email);
+export const login = createAsyncThunk(
+  "auth/login",
+  async (data, { rejectWithValue }) => {
+    const repositoryService = new RepositoryService();
+    const response = await repositoryService.authRepository.login(data);
+    // console.log("rep", response);
+    if (response.error) {
+      // console.log(response.error);
+      myError = rejectWithValue({ error: response.error });
+      return myError;
+    } else {
+      await AsyncStorage.setItem("token", response.token);
+      await AsyncStorage.setItem("email", response.email);
+      return response;
+    }
   }
-  return response;
-});
+);
 
-export const register = createAsyncThunk("auth/register", async (data) => {
-  // console.log("Authslice reg ", data);
-  const repositoryService = new RepositoryService();
-  const response = await repositoryService.authRepository.register(data);
-
-  if (response) {
-    await AsyncStorage.setItem("token", response.token);
-    await AsyncStorage.setItem("email", response.email);
+export const register = createAsyncThunk(
+  "auth/register",
+  async (data, { rejectWithValue }) => {
+    const repositoryService = new RepositoryService();
+    const response = await repositoryService.authRepository.register(data);
+    if (response.error) {
+      // console.log(response.error);
+      return rejectWithValue({ error: response.error });
+    } else {
+      await AsyncStorage.setItem("token", response.token);
+      await AsyncStorage.setItem("email", response.email);
+      return response;
+    }
   }
-  // console.log(response);
-  return response;
-});
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -88,7 +98,7 @@ export const authSlice = createSlice({
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message;
+      state.error = action.payload.error;
     });
     //Register
     builder.addCase(register.pending, (state) => {
@@ -98,11 +108,13 @@ export const authSlice = createSlice({
       state.loading = false;
       state.token = action.payload.token;
       state.email = action.payload.email;
+      state.error = "";
       state.registration = true;
     });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message;
+      // console.log(action.error.error);
+      state.error = action.payload.error;
     });
   },
 });
