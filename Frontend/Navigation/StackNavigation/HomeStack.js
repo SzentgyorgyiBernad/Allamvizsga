@@ -6,7 +6,11 @@ export const HomeStack = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen component={Menu} name="Menu" />
+      <Stack.Screen
+        component={Menu}
+        name="Menu"
+        screenOptions={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

@@ -2,20 +2,30 @@ import React from "react";
 import { useAppDispatch } from "../../Hooks/hooks";
 import { useAppSelector } from "../../Hooks/hooks";
 import {
+  createDefaultAccount,
   getAllCurrencyFromDB,
-  invoiceSelector,
-} from "../../Redux/InvoiceCreate/InvoiceCreateSlice";
+  accountSelector,
+} from "../../Redux/AccountCreate/AccountCreateSlice";
 
 export const useInvoiceCreateScreenLogic = () => {
-  const invoiceState = useAppSelector(invoiceSelector);
-  const { currencies, loading, selectedCurrency, amount } = invoiceState;
-  const allCurrency = currencies;
+  //accountState
+  // console.log("accountState");
+  const accountState = useAppSelector(accountSelector);
+  // console.log("accountState utan");
+  const { currencies, loading } = accountState;
+  const { selectedCurrency, amount } = accountState;
+  // console.log("accountState", currencies);
+  // const allCurrency = currencies;
+  //userState
+  const authState = useAppSelector((state) => state.authReducer);
+  const email = authState.email;
 
   const [error, setError] = React.useState();
   const dispatch = useAppDispatch();
 
-  const getAllCurrency = async () => {
-    await dispatch(getAllCurrencyFromDB());
+  const getAllCurrency = () => {
+    dispatch(getAllCurrencyFromDB());
+    console.log("allCurrency", currencies);
   };
 
   const handleError = (key, message) => {
@@ -23,13 +33,25 @@ export const useInvoiceCreateScreenLogic = () => {
   };
 
   const handleInvoiceCreate = () => {
-    console.log("handle invoice create", selectedCurrency, amount);
-    // dispatch()
+    console.log(
+      "Ezzel megy a backend asdwafsfele",
+      selectedCurrency,
+      amount,
+      email
+    );
+    dispatch(
+      createDefaultAccount({
+        selectedCurrency,
+        amount,
+        accountName: "Main",
+        email,
+      })
+    );
   };
 
   return {
     error,
-    allCurrency,
+    currencies,
     loading,
     getAllCurrency,
     handleInvoiceCreate,

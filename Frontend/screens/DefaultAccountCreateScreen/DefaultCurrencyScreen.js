@@ -1,5 +1,12 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, View, Text, StatusBar, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import React from "react";
 import COLORS from "../../constants/colors";
 import MyCard from "../../components/Molecules/MyCard";
@@ -7,33 +14,46 @@ import MyDropDown from "../../components/Molecules/MyDropDown";
 import { useEffect } from "react";
 import { useInvoiceCreateScreenLogic } from "./DefaultAccountCreate.Logic";
 import { useAppDispatch } from "../../Hooks/hooks";
-import { setSelectedCurrency } from "../../Redux/InvoiceCreate/InvoiceCreateSlice";
+import { setSelectedCurrency } from "../../Redux/AccountCreate/AccountCreateSlice";
+import { combineSlices } from "@reduxjs/toolkit";
 
 const DefaultCurrencyScreen = ({ navigation }) => {
-  const { allCurrency, getAllCurrency, error, handleInvoiceCreate } =
+  // console.log("allCurrasdency", allCurrency);
+  const { currencies, getAllCurrency, error, loading } =
     useInvoiceCreateScreenLogic();
-  const [isLoading, setIsLoading] = React.useState(true);
-  // const [currency, setCurrency] = React.useState();
+  // console.log("allCurrasdency 2", allCurrency);
+  // const [isLoading, setIsLoading] = React.useState(true);
   const dispatch = useAppDispatch();
-
+  // console.log("allCurrency", allCurrency);
   useEffect(() => {
-    console.log("useEffect");
-    getAllCurrency().then(() => setIsLoading(false));
+    // console.log("useEffeasdct");
+    getAllCurrency();
+    // setIsLoading(false);
   }, []);
+  // console.log("allCurrdency", allCurrsency);
 
   const renderCurrencies = () => {
-    if (isLoading) {
+    if (loading) {
+      console.log("Loading", currencies);
       return <Text>Loading...</Text>;
     }
+    console.log("Currencies", currencies);
     return (
-      <View style={{ marginVertical: 16, paddingBottom: 12 }}>
-        <MyDropDown
-          items={allCurrency}
-          setSelectedCurrency={(value) => {
-            dispatch(setSelectedCurrency(value));
-          }}
-        ></MyDropDown>
-      </View>
+      <ScrollView style>
+        {currencies &&
+          currencies.values.map((currency, index) => (
+            <Pressable
+              style={{ padding: 12, borderBottomWidth: 1 }}
+              key={index}
+              onPress={() => {
+                dispatch(setSelectedCurrency(currency));
+                console.log("Currency", currency);
+              }}
+            >
+              <Text>{currency}</Text>
+            </Pressable>
+          ))}
+      </ScrollView>
     );
   };
 
@@ -44,6 +64,7 @@ const DefaultCurrencyScreen = ({ navigation }) => {
     >
       <MyCard
         style={{
+          height: "80%",
           paddingTop: 42,
           paddingBottom: 48,
           paddingHorizontal: 24,
@@ -94,7 +115,7 @@ const DefaultCurrencyScreen = ({ navigation }) => {
 
         <View
           style={{
-            justifyContent: "flex-end",
+            // justifyContent: "flex-end",
             alignSelf: "center",
             width: 150,
             borderWidth: 1,

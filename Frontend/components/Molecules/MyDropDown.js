@@ -18,12 +18,10 @@ const MyDropDown = ({ items, setSelectedCurrency }) => {
         onValueChange={handleValueChange}
       >
         {items &&
-          items.values.map(
-            (item, index) => (
-              console.log("item", item),
-              (<Picker.Item key={index} label={item} value={item} />)
-            )
-          )}
+          items.values.map((item, index) => (
+            // console.log("item", item),
+            <Picker.Item key={index} label={item} value={item} />
+          ))}
       </Picker>
     </View>
   );

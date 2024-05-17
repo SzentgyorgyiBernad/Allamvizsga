@@ -5,9 +5,12 @@ import { AuthStack } from "./StackNavigation/AuthStack";
 import { Default } from "./StackNavigation/Default";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSilently } from "../Redux/Auth/AuthSlice";
+import { accountSelector } from "../Redux/AccountCreate/AccountCreateSlice";
+import { useAppSelector } from "../Hooks/hooks";
 
 export const RootNavigation = () => {
   const authState = useSelector((state) => state.authReducer);
+  const accountState = useAppSelector(accountSelector);
   const userLoading = authState.loading;
   const userToken = authState.token;
   const userRegistration = authState.registration;
@@ -35,6 +38,10 @@ export const RootNavigation = () => {
     authState.registration = false;
     // console.log("Itt kellene a defaultra dobjon");
     return <Default />;
+  }
+  if ((accountState.final = true)) {
+    accountState.final = false;
+    return <TabNavigation />;
   }
 
   return <TabNavigation />;

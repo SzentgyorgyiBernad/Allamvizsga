@@ -5,7 +5,7 @@ import MyCard from "../../components/Molecules/MyCard";
 import MyInput from "../../components/Molecules/MyInput";
 import { useInvoiceCreateScreenLogic } from "./DefaultAccountCreate.Logic";
 import { useAppDispatch } from "../../Hooks/hooks";
-import { setAmount } from "../../Redux/InvoiceCreate/InvoiceCreateSlice";
+import { setAmount } from "../../Redux/AccountCreate/AccountCreateSlice";
 import React from "react";
 
 const StartBalanceScreen = ({ navigation }) => {
@@ -34,7 +34,7 @@ const StartBalanceScreen = ({ navigation }) => {
           <MyInput
             style={styles.input}
             placeholder="Enter you start balance..."
-            onChangeText={setNewAmount}
+            onChangeText={(value) => dispatch(setAmount(value))}
           ></MyInput>
         </View>
 
@@ -50,7 +50,6 @@ const StartBalanceScreen = ({ navigation }) => {
         >
           <Pressable
             onPress={() => {
-              dispatch(setAmount(amount));
               handleInvoiceCreate();
             }}
           >
