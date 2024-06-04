@@ -11,7 +11,7 @@ export const useRegisterScreenLogic = () => {
 
   const [error, setError] = React.useState({});
 
-  const myError = authState.error;
+  // const myError = authState.error;
 
   React.useEffect(() => {
     handleError("state", authState.error);
@@ -40,13 +40,13 @@ export const useRegisterScreenLogic = () => {
       return;
     } else handleError("password", "");
 
-    if (myError) {
-      handleError("email", myError);
-      // console.log("logic", myError);
-      return;
-    }
+    // if (myError) {
+    //   handleError("email", myError);
+    //   // console.log("logic", myError);
+    //   return;
+    // }
 
-    // console.log("Logic register");
+    console.log("Logic register");
     dispatch(
       register({
         email,

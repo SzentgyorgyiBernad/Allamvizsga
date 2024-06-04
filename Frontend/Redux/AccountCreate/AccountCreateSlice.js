@@ -2,9 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import RepositoryService from "../../Services/RepositoryService";
 
 const initialState = {
-  selectedCurrency: null,
-  accountName: null,
-  amount: null,
   currencies: [],
   loading: false,
   error: undefined,
@@ -14,15 +11,15 @@ const initialState = {
 export const getAllCurrencyFromDB = createAsyncThunk(
   "currency/allCurrency",
   async (_, { rejectWithValue }) => {
-    // console.log("get all currency from db");
+    console.log("get all currency from db");
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.accountCreateRepository.getAllCurrency();
-    // console.log("response from fetch", response);
+    console.log("response from fetch", response);
     if (response.error) {
       return rejectWithValue({ error: response.error });
     } else {
-      // console.log("redx", response);
+      console.log("redx", response);
       return response;
     }
   }
@@ -31,7 +28,7 @@ export const getAllCurrencyFromDB = createAsyncThunk(
 export const createDefaultAccount = createAsyncThunk(
   "account/createDefaultAccount",
   async (data, { rejectWithValue }) => {
-    console.log("createDefaultAccount", data);
+    // console.log("createDefaultAccount", data);
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.accountCreateRepository.createDefaultAccount(
@@ -46,21 +43,9 @@ export const createDefaultAccount = createAsyncThunk(
 );
 
 export const accountCreateSlice = createSlice({
-  name: "account",
+  name: "accountCreate",
   initialState,
-  reducers: {
-    setAccountName: (state, action) => {
-      state.accountName = action.payload;
-    },
-    setAmount: (state, action) => {
-      // console.log("setAmount", action.payload);
-      state.amount = action.payload;
-    },
-    setSelectedCurrency: (state, action) => {
-      // console.log("setSelectedCurrency", action.payload);
-      state.selectedCurrency = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllCurrencyFromDB.pending, (state) => {
       state.loading = true;
@@ -78,18 +63,16 @@ export const accountCreateSlice = createSlice({
     builder.addCase(createDefaultAccount.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(createDefaultAccount.fulfilled, (state, action) => {
+    builder.addCase(createDefaultAccount.fulfilled, (state) => {
       state.loading = false;
       state.final = true;
     });
-    builder.addCase(createDefaultAccount.rejected, (state) => {
+    builder.addCase(createDefaultAccount.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload.error;
     });
   },
 });
 
-export default accountReducer = accountCreateSlice.reducer;
-export const accountSelector = (state) => state.accountReducer;
-export const { setAccountName, setAmount, setSelectedCurrency } =
-  accountCreateSlice.actions;
+export default accountCreateSlice.reducer;
+// export const accountSelector = (state) => state.accountReducer;

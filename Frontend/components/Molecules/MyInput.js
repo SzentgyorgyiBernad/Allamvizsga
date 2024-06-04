@@ -3,7 +3,14 @@ import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native";
 import COLORS from "../../constants/colors";
 
-const MyInput = ({ value, onChangeText, placeholder, secure, error }) => {
+const MyInput = ({
+  value,
+  onChangeText,
+  placeholder,
+  secure,
+  error,
+  keyboardType,
+}) => {
   return (
     <View>
       <TextInput
@@ -12,6 +19,7 @@ const MyInput = ({ value, onChangeText, placeholder, secure, error }) => {
         onChangeText={(text) => onChangeText(text)}
         value={value}
         secureTextEntry={secure}
+        keyboardType={keyboardType ? "number-pad" : "default"}
       />
     </View>
   );

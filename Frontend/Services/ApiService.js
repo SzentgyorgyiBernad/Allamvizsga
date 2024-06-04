@@ -13,7 +13,8 @@ export default class ApiService {
   }
 
   async fetchData(endPoint, method, options) {
-    console.log("Api fetch:", this.baseUrl, endPoint, method, options);
+    // console.log("Api fetch:", this.baseUrl, endPoint, method, options);
+    // console.log("Api fetch:", options?.token);
     // console.log(JSON.stringify(options?.body));
     try {
       const response = await fetch(`${this.baseUrl}/${endPoint}`, {
@@ -40,9 +41,9 @@ export default class ApiService {
   }
 
   async get(endPoint, options) {
-    // console.log("ApiService get");
+    // console.log("ApiService get", options);
     return await this.fetchData(endPoint, "GET", {
-      token: options?.token,
+      token: options?.body.token,
     });
   }
 

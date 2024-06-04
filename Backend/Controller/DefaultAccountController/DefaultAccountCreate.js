@@ -1,38 +1,40 @@
 const { PrismaClient } = require("@prisma/client");
 const { v4: uuidv4 } = require("uuid");
+const { getUser } = require("../../Models/UserModel");
 
 const prisma = new PrismaClient();
 
-module.exports = class AccountController {
+module.exports = class DefaultAccountController {
   async createDefaultAccount(req, res) {
     try {
-      console.log("createDefaultAccount in controller", req.body);
+      // console.log("createDefaultAccount in controller", req.body);
       const { selectedCurrency, amount, accountName, email } = req.body;
-      const user = await prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
 
-      const userId = user.id;
-      const accountId = uuidv4();
-      console.log(selectedCurrency, amount, accountName, email);
+      const user = await getUser(email);
+      // console.log("user: ", user);
+
+      // console.log(selectedCurrency, amount, accountName, email);
       const currencyId = await prisma.currency.findFirst({
         where: {
           name: selectedCurrency,
         },
       });
-      // console.log(currencyId);
+      // console.log(currencyId.id);
       const newAccount = await prisma.accounts.create({
         data: {
-          id: accountId,
+          id: uuidv4(),
           name: accountName,
           amount: parseFloat(amount),
-          user_id: userId,
-          currency_name: currencyId.id,
           default: true,
+          currency: {
+            connect: { id: currencyId.id },
+          },
+          user: {
+            connect: { id: user.user.id },
+          },
         },
       });
+      // console.log(newAccount);
 
       res.status(200).json({ message: "Account created" });
     } catch (error) {

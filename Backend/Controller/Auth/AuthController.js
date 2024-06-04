@@ -1,44 +1,14 @@
-const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid");
-const jwt = require("jsonwebtoken");
-// const { userExists, userFromDb, getUser } = require("../Models/UserModel");
-
-const prisma = new PrismaClient();
+const AuthService = require("../../Services/AuthService");
 
 module.exports = class AuthController {
   async register(req, res) {
-    console.log("Backend register");
+    // console.log("Backend register");
+    const { email, password } = req.body;
     try {
-      const { email, password } = req.body;
-
-      const existingUser = await prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-      if (existingUser) {
-        return res.status(400).json({ error: "Email is already registered!" });
-      }
-      // console.log("Bejone ide<");
-      //Encrypting the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      //Creating new user
-      const newId = uuidv4();
-
-      const newUser = await prisma.user.create({
-        data: {
-          id: newId,
-          email: email,
-          password: hashedPassword,
-        },
-      });
       // Token
-      const token = jwt.sign({ userId: newId }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-      });
-      res.status(200).json({ token: token, email: email });
+      const token = await AuthService.register(email, password);
+      // console.log("Token: ", token);
+      res.status(200).json({ token: token.token, email: email });
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }
@@ -47,33 +17,11 @@ module.exports = class AuthController {
   async login(req, res) {
     // console.log(req);
     // console.log("Be van loginolva");
+    const { email, password } = req.body;
     try {
-      const { email, password } = req.body;
-      console.log(email, password);
-      const userFromDb = await prisma.user.findFirst({
-        where: {
-          email: email,
-        },
-      });
-      // console.log("user a dbbol", userFromDb);
-      if (userFromDb == null) {
-        // console.log("Ninsc ilyen user");
-        return res.status(404).json({ error: "Invalid email or password!" });
-      }
-      // console.log(userFromDb.password);
-      // console.log(password);
-      const passwordMatch = await bcrypt.compare(password, userFromDb.password);
-      console.log("ma", passwordMatch);
-      if (!passwordMatch) {
-        res.status(401).json({ error: "Invalid email or password!" });
-      }
-      const token = jwt.sign(
-        { userId: userFromDb.id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
+      const token = await AuthService.login(email, password);
       // console.log("Token: ", token);
-      res.status(200).json({ token: token, email: email });
+      res.status(200).json({ token: token.token, email: email });
     } catch (error) {
       // console.log(error);
       res.status(500).json({ error: "Internal server error" });

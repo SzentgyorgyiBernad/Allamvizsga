@@ -1,67 +1,88 @@
-import { View, Text, Image, Pressable } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import React, { useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../constants/colors";
 import Button from "../../components/Button";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAppDispatch } from "../../Hooks/hooks";
-import { logout } from "../../Redux/Auth/AuthSlice";
-import MyCard from "../../components/Molecules/MyCard";
-import { AntDesign } from "@expo/vector-icons";
+import { useMenuScreenLogic } from "./MenuScreen.logic";
+
+const { width } = Dimensions.get("window");
 
 const Menu = ({ navigation }) => {
-  const dispatch = useAppDispatch();
+  const { accounts, getAccounts, onLogout } = useMenuScreenLogic();
+  useEffect(() => {
+    console.log("UseEffect hivodik");
+    getAccounts();
+  }, []);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const flatListRef = React.useRef();
 
-  const handleLogout = async () => {
-    // console.log("Logout");
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("email");
-    dispatch(logout());
-    // console.log(AsyncStorage.getItsem("token"));
+  // const handleLogout = async () => {
+  //   console.log("Logout");
+  //   await AsyncStorage.removeItem("token");
+  //   await AsyncStorage.removeItem("email");
+  //   logout();
+  //   console.log(AsyncStorage.getItem("token"));
+  // };
+
+  const handleScorll = (event) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    setSelectedIndex(index);
+    console.log("Index", index);
   };
 
-  const renderAccounts = () => {};
+  const renderItem = ({ item }) => {
+    return (
+      <View style={styles.card}>
+        <View style={{ borderWidth: 1, height: "100%", width: "100%" }}>
+          <Text>{item.currency.name}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  // const renderAccounts = () => {};
 
   return (
     <LinearGradient
-      style={{ flex: 1, alignItems: "center" }}
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+      }}
       colors={[COLORS.primary, COLORS.black]}
     >
-      <View style={{ marginVertical: 22 }}></View>
-      <MyCard style={{ width: "90%", height: 50 }}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            alignSelf: "center",
-          }}
-        >
-          <View style={{ alignSelf: "center" }}>
-            <AntDesign name="barschart" size={24} color="black" />
-          </View>
-          <View tyle={{ alignSelf: "center" }}>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 22,
-                marginTop: 5,
-                marginLeft: 6,
-              }}
-            >
-              Overview
-            </Text>
-          </View>
-        </View>
-      </MyCard>
+      <View style={styles.titleCard}>
+        <Text style={{ fontSize: 22 }}>Overview</Text>
+      </View>
 
-      <MyCard style={{ width: "90%", height: "70%", marginTop: 16 }}>
-        <View></View>
-        <View></View>
-        <View></View>
-      </MyCard>
+      <View style={styles.accountCard}>
+        <FlatList
+          data={accounts}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={handleScorll}
+          ref={flatListRef}
+        >
+          <View>
+            <Text>Selected Index: {selectedIndex}</Text>
+          </View>
+        </FlatList>
+      </View>
       <Button
         title="Logout"
-        onPress={handleLogout}
+        onPress={onLogout}
         style={{ width: "90%", marginTop: 16 }}
       />
     </LinearGradient>
@@ -69,3 +90,31 @@ const Menu = ({ navigation }) => {
 };
 
 export default Menu;
+
+const styles = StyleSheet.create({
+  card: {
+    width: width * 0.839,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    padding: 20,
+  },
+  titleCard: {
+    position: "relative",
+    top: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.white,
+    height: 50,
+    width: "90%",
+    borderRadius: 20,
+  },
+  accountCard: {
+    width: "90%",
+    height: "60%",
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    marginVertical: 8,
+    padding: 12,
+  },
+});

@@ -1,44 +1,30 @@
 import React from "react";
-import { useAppDispatch } from "../../Hooks/hooks";
-import { useAppSelector } from "../../Hooks/hooks";
+import { useSelector, useDispatch } from "react-redux";
 import {
   createDefaultAccount,
   getAllCurrencyFromDB,
-  accountSelector,
 } from "../../Redux/AccountCreate/AccountCreateSlice";
 
 export const useInvoiceCreateScreenLogic = () => {
-  //accountState
-  // console.log("accountState");
-  const accountState = useAppSelector(accountSelector);
-  // console.log("accountState utan");
+  const accountState = useSelector((state) => state.accountCreateReducer);
   const { currencies, loading } = accountState;
-  const { selectedCurrency, amount } = accountState;
-  // console.log("accountState", currencies);
-  // const allCurrency = currencies;
-  //userState
-  const authState = useAppSelector((state) => state.authReducer);
+  const authState = useSelector((state) => state.authReducer);
   const email = authState.email;
 
   const [error, setError] = React.useState();
-  const dispatch = useAppDispatch();
+  const [selectedCurrency, setSelectedCurrency] = React.useState("");
+  const [amount, setAmount] = React.useState("");
+  const dispatch = useDispatch();
 
   const getAllCurrency = () => {
     dispatch(getAllCurrencyFromDB());
-    console.log("allCurrency", currencies);
   };
 
   const handleError = (key, message) => {
     setError((prevState) => ({ ...prevState, [key]: message }));
   };
 
-  const handleInvoiceCreate = () => {
-    console.log(
-      "Ezzel megy a backend asdwafsfele",
-      selectedCurrency,
-      amount,
-      email
-    );
+  const handleAccountCreate = () => {
     dispatch(
       createDefaultAccount({
         selectedCurrency,
@@ -54,6 +40,10 @@ export const useInvoiceCreateScreenLogic = () => {
     currencies,
     loading,
     getAllCurrency,
-    handleInvoiceCreate,
+    handleAccountCreate,
+    setAmount,
+    setSelectedCurrency,
+    amount,
+    selectedCurrency,
   };
 };

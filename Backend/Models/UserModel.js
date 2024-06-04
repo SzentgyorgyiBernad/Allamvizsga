@@ -19,8 +19,8 @@ async function getUser(email) {
       email: email,
     },
   });
-
-  return !!userFromDb;
+  console.log("userFromDb", userFromDb);
+  return { user: userFromDb };
 }
 
 module.exports = { userExists, getUser };

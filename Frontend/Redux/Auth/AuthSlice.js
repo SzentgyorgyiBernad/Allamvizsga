@@ -48,6 +48,7 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async (data, { rejectWithValue }) => {
+    console.log("data", data);
     const repositoryService = new RepositoryService();
     const response = await repositoryService.authRepository.register(data);
     if (response.error) {
@@ -95,6 +96,7 @@ export const authSlice = createSlice({
       state.loading = false;
       state.token = action.payload.token;
       state.email = action.payload.email;
+      state.error = "";
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
@@ -105,6 +107,7 @@ export const authSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(register.fulfilled, (state, action) => {
+      console.log("Fullfilled");
       state.loading = false;
       state.token = action.payload.token;
       state.email = action.payload.email;

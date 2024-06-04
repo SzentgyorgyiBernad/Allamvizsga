@@ -2,28 +2,28 @@ import { useEffect } from "react";
 import { TabNavigation } from "./TabNavigation/TabNavigation";
 import { ActivityIndicator, View } from "react-native";
 import { AuthStack } from "./StackNavigation/AuthStack";
-import { Default } from "./StackNavigation/Default";
+import { DefaultAccountCreateStack } from "./StackNavigation/DefaultAccountCreateStack";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSilently } from "../Redux/Auth/AuthSlice";
-import { accountSelector } from "../Redux/AccountCreate/AccountCreateSlice";
-import { useAppSelector } from "../Hooks/hooks";
 
 export const RootNavigation = () => {
   const authState = useSelector((state) => state.authReducer);
-  const accountState = useAppSelector(accountSelector);
+  const accountCreateState = useSelector((state) => state.accountCreateReducer);
   const userLoading = authState.loading;
   const userToken = authState.token;
   const userRegistration = authState.registration;
+  const final = accountCreateState.final;
+  // console.log("final lekeresekor", final);
   const dispatch = useDispatch();
-  const handleSignInSilently = () => {
-    dispatch(loginSilently());
-  };
+  // console.log("userToken", userToken);
 
   useEffect(() => {
+    // console.log("useEffect");
     dispatch(loginSilently());
   }, []);
 
   if (userLoading) {
+    // console.log("userLoading");
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size={"large"} />
@@ -32,17 +32,17 @@ export const RootNavigation = () => {
   }
 
   if (!userToken) {
+    // console.log("nincs userToken");
     return <AuthStack />;
   }
-  if (userToken && userRegistration == true) {
-    authState.registration = false;
-    // console.log("Itt kellene a defaultra dobjon");
-    return <Default />;
-  }
-  if ((accountState.final = true)) {
-    accountState.final = false;
+  if (final == true) {
+    // console.log("Itt megy a menube");
     return <TabNavigation />;
   }
-
+  if (userToken && userRegistration == true) {
+    // console.log("userToken van, es atdob a main account create screenre");
+    return <DefaultAccountCreateStack />;
+  }
+  // console.log("Itt megy a menube");
   return <TabNavigation />;
 };

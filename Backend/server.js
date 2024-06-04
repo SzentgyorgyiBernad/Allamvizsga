@@ -1,4 +1,3 @@
-// import AuthController from "./Controlles/AuthController";
 var bodyParser = require("body-parser");
 const express = require("express");
 const { PrismaClient, Prisma } = require("@prisma/client");
@@ -15,22 +14,26 @@ app.use(express.json());
 app.use(cors());
 
 const AuthController = require("./Controller/Auth/AuthController");
-const DefaultAccountCreate = require("./Controller/DefaultAccountController/AccountCreate");
-const Currency = require("./Controller/CurrencyController/Currency");
+const DefaultAccountController = require("./Controller/DefaultAccountController/DefaultAccountCreate");
+const CurrencyController = require("./Controller/CurrencyController/CurrencyController");
+const AccountController = require("./Controller/AccountController/AccountController");
 const authController = new AuthController();
-const accountController = new DefaultAccountCreate();
-const currency = new Currency();
+const defaultAccountController = new DefaultAccountController();
+const currencyController = new CurrencyController();
+const accountController = new AccountController();
 
-const AuthMiddleware = require("./Middleware/auth");
-
+const AuthMiddleware = require("./Middleware/authJWT");
+//Auth
 app.post("/auth/register", authController.register);
 app.post("/auth/login", authController.login);
-
-app.get("/currency/allCurrency", currency.getAllCurrency);
-
+//Currency
+app.get("/currency/allCurrency", currencyController.getAllCurrency);
+//DefaultAccount
 app.post(
   "/account/createDefaultAccount",
-  accountController.createDefaultAccount
+  defaultAccountController.createDefaultAccount
 );
+//Account
+app.get("/account/getAccounts", accountController.getAllAccount);
 
 app.listen(8000, () => console.log("The server is running on: 8000"));
