@@ -11,15 +11,15 @@ const initialState = {
 export const getAllCurrencyFromDB = createAsyncThunk(
   "currency/allCurrency",
   async (_, { rejectWithValue }) => {
-    console.log("get all currency from db");
+    // console.log("get all currency from db");
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.accountCreateRepository.getAllCurrency();
-    console.log("response from fetch", response);
+    // console.log("response from fetch", response);
     if (response.error) {
       return rejectWithValue({ error: response.error });
     } else {
-      console.log("redx", response);
+      // console.log("redx", response);
       return response;
     }
   }
@@ -52,7 +52,7 @@ export const accountCreateSlice = createSlice({
     });
     builder.addCase(getAllCurrencyFromDB.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("builder", action.payload);
+      // console.log("builder currencies", action.payload);
       state.currencies = action.payload;
     });
     builder.addCase(getAllCurrencyFromDB.rejected, (state) => {

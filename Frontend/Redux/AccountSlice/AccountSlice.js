@@ -6,6 +6,7 @@ const initialState = {
   accounts: [],
   loading: false,
   error: undefined,
+  selectedAccount: null,
 };
 
 export const getAllAccounts = createAsyncThunk(
@@ -27,7 +28,12 @@ export const getAllAccounts = createAsyncThunk(
 export const accountSlice = createSlice({
   name: "account",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedAccount: (state, action) => {
+      // console.log("action.payload", action.payload);
+      state.selectedAccount = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllAccounts.pending, (state) => {
       state.loading = true;
@@ -46,3 +52,4 @@ export const accountSlice = createSlice({
 });
 
 export default accountSlice.reducer;
+export const { setSelectedAccount } = accountSlice.actions;

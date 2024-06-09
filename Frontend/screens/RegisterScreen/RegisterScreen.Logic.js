@@ -46,7 +46,7 @@ export const useRegisterScreenLogic = () => {
     //   return;
     // }
 
-    console.log("Logic register");
+    // console.log("Logic register");
     dispatch(
       register({
         email,

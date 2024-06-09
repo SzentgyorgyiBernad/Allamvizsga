@@ -107,7 +107,7 @@ export const authSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(register.fulfilled, (state, action) => {
-      console.log("Fullfilled");
+      // console.log("Fullfilled");
       state.loading = false;
       state.token = action.payload.token;
       state.email = action.payload.email;

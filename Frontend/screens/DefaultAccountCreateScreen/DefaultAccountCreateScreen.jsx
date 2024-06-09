@@ -49,6 +49,7 @@ const DefaultAccountCreateScreen = ({navigation}) => {
               </Text>
                 <View style={styles.currencyListContainer}>
                     {renderCurrencies()}
+                    {console.log(currencies)}
                 </View>
             </View>
             

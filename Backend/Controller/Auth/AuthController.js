@@ -5,6 +5,7 @@ module.exports = class AuthController {
     // console.log("Backend register");
     const { email, password } = req.body;
     try {
+      console.log("Email: ", email);
       // Token
       const token = await AuthService.register(email, password);
       // console.log("Token: ", token);

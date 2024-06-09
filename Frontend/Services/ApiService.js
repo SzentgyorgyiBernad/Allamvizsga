@@ -1,5 +1,5 @@
 export default class ApiService {
-  baseUrl = "http://192.168.0.191:8000";
+  baseUrl = "http://192.168.1.7:8000";
 
   static instance = null;
 
@@ -14,8 +14,8 @@ export default class ApiService {
 
   async fetchData(endPoint, method, options) {
     // console.log("Api fetch:", this.baseUrl, endPoint, method, options);
-    // console.log("Api fetch:", options?.token);
-    // console.log(JSON.stringify(options?.body));
+    // console.log("Api fetch:", options, method, endPoint);
+    // console.log("Api fetch:");
     try {
       const response = await fetch(`${this.baseUrl}/${endPoint}`, {
         method,
@@ -48,7 +48,7 @@ export default class ApiService {
   }
 
   async post(endPoint, options) {
-    // console.log("ApiService login asd");
+    // console.log("ApiService", options?.body);
     return await this.fetchData(endPoint, "POST", options);
   }
 }

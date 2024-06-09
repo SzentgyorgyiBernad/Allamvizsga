@@ -9,11 +9,11 @@ module.exports = class AccountController {
       const headers = req.headers.authorization;
       //   console.log("headers", headers);
       const token = headers.split(" ")[1];
-      console.log("JWT_SECRET", process.env.JWT_SECRET);
+      // console.log("JWT_SECRET", process.env.JWT_SECRET);
       const user = jwt.verify(token, process.env.JWT_SECRET).user;
-      console.log("user a tokenbol", user);
+      // console.log("user a tokenbol", user);
       const accounts = await AccountService.getAccounts(user.id);
-      console.log("accounts in controller", accounts);
+      // console.log("accounts in controller", accounts);
       res.status(200).json({ values: accounts });
     } catch (error) {
       console.log(error.message);
