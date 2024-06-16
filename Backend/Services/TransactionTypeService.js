@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-const { v4: uuidv4 } = require("uuid");
 const prisma = new PrismaClient();
 
 async function getAllTransactionType() {
@@ -11,6 +10,7 @@ async function getAllTransactionType() {
         in_or_out: true,
       },
     });
+    console.log("transactionTypes", transactionTypes);
 
     return { transactionTypes: transactionTypes };
   } catch (error) {
@@ -58,10 +58,21 @@ async function getIncomeByMonthsChart(accountId) {
 }
 
 async function getLastThreeTransaction(accountId) {
+  // console.log("accountId", accountId);
   try {
+    const now = new Date();
+    const startMonth = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+
+    // console.log("startMonth", startMonth);
+    // console.log("now", now);
+
     const lastThreeTransactions = await prisma.income.findMany({
       where: {
         account_id: accountId,
+        date: {
+          lte: now,
+          gte: startMonth,
+        },
       },
       select: {
         id: true,
@@ -90,10 +101,10 @@ async function getLastThreeTransaction(accountId) {
 
 async function createTransaction(body) {
   try {
-    console.log("body", body);
-    const transactionType = await prisma.income.create({
+    // console.log("body", body);
+    const transaction = await prisma.income.create({
       data: {
-        id: uuidv4(),
+        id: body.id,
         amount: parseFloat(body.amount),
         date: body.date,
         note: body.description,
@@ -108,7 +119,33 @@ async function createTransaction(body) {
       },
     });
 
-    return { response: "OK" };
+    const incomeType = await prisma.income_types.findUnique({
+      where: {
+        id: body.selectedTransactionType,
+      },
+      select: {
+        name: true,
+      },
+    });
+
+    const updatedAccount = await prisma.accounts.update({
+      where: {
+        id: body.selectedAccount,
+      },
+      data: {
+        amount: {
+          increment: parseFloat(body.amount), // Hozzáadjuk a body.amountot az aktuális összeghez
+        },
+      },
+    });
+
+    const responseTransaction = {
+      ...transaction,
+      income_type: { name: incomeType.name },
+    };
+    // console.log("responseTransaction", responseTransaction);
+
+    return { response: "OK", value: responseTransaction };
   } catch (error) {
     return error.message;
   }

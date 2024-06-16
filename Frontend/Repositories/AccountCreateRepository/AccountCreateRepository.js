@@ -1,9 +1,9 @@
 import BaseRepository from "../BaseRepository";
 
 export default class AccountCreateRepository extends BaseRepository {
-  async getAllCurrency(body) {
-    // console.log("getAllCurrency in repository aaaaaaaaaaaaaaaaaaa");
-    response = await this.api.get("currency/allCurrency", { body });
+  async getAllCurrency(token) {
+    // console.log("getAllCurrency in repository aaaaaaaaaaaaaaaaaaa", token);
+    response = await this.api.get("currency/allCurrency", { token });
     // console.log("response from repo", response);
     return response;
   }

@@ -48,7 +48,7 @@ const AddNewTransactionScreen = () => {
     const renderTypeButton = ({item}) => {
         
         return (
-            <Pressable onPress={() => setSelectedTransactionType(item.id)}
+            <Pressable onPress={() => setSelectedTransactionType(item)}
             style={({ pressed }) => [
                 {
                     backgroundColor: selectedTransactionType === item.id ? 'lightgrey' : (pressed ? 'grey' : 'white'),
@@ -114,7 +114,7 @@ const AddNewTransactionScreen = () => {
                 </Pressable>
             </View>
             <View style={{paddingHorizontal: 16, width: "90%"}}>
-                <MyInput value={amount} placeholder='Amount' keyboardType='numeric' onChangeText={(value) => setAmount(value)}/>
+                <MyInput value={String(amount)} placeholder='Amount' keyboardType='numeric' onChangeText={(value) => setAmount(value)}/>
             </View>
             <View style={{borderBottomWidth: 1, width: "80%" }}></View>
             <View style={{ width: "90%", gap: 5}}>
@@ -127,7 +127,7 @@ const AddNewTransactionScreen = () => {
             <View style={{ width: "90%"}}>
                     <Text style={styles.title}>Description</Text>
                     <TextInput
-                    value={description}
+                     value={description}
                      multiline={true}
                      placeholder='Description...'
                      style={styles.descriptionTextInput} 
@@ -184,7 +184,7 @@ const AddNewTransactionScreen = () => {
             <View style={{ width: "90%", gap: 5}}>
                 <Text style={styles.title}>Date</Text>
                  <Pressable style={styles.dateButton} onPress={() => setVisible(true)}>
-                    {console.log('Date:', date)}
+                    {/* {console.log('Date:', date)} */}
                     <Text style={{textAlign: 'center'}}>{date.toISOString().split('T')[0]}</Text>
                 </Pressable>   
                 <DateTimePickerModal 

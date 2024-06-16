@@ -10,7 +10,7 @@ export const RootNavigation = () => {
   const authState = useSelector((state) => state.authReducer);
   const accountCreateState = useSelector((state) => state.accountCreateReducer);
   const userLoading = authState.loading;
-  const userToken = authState.token;
+  const user = authState.email;
   const userRegistration = authState.registration;
   const final = accountCreateState.final;
   // console.log("final lekeresekor", final);
@@ -31,7 +31,7 @@ export const RootNavigation = () => {
     );
   }
 
-  if (!userToken) {
+  if (!user) {
     // console.log("nincs userToken");
     return <AuthStack />;
   }
@@ -39,8 +39,8 @@ export const RootNavigation = () => {
     // console.log("Itt megy a menube");
     return <TabNavigation />;
   }
-  if (userToken && userRegistration == true) {
-    // console.log("userToken van, es atdob a main account create screenre");
+  if (user && userRegistration == true) {
+    // console.log("user van, es atdob a main account create screenre");
     return <DefaultAccountCreateStack />;
   }
   // console.log("Itt megy a menube");

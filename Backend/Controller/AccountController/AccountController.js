@@ -9,7 +9,7 @@ module.exports = class AccountController {
       const headers = req.headers.authorization;
       //   console.log("headers", headers);
       const token = headers.split(" ")[1];
-      // console.log("JWT_SECRET", process.env.JWT_SECRET);
+      // console.log("token", token);
       const user = jwt.verify(token, process.env.JWT_SECRET).user;
       // console.log("user a tokenbol", user);
       const accounts = await AccountService.getAccounts(user.id);

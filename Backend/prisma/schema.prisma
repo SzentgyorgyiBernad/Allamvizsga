@@ -19,8 +19,6 @@ model User {
   password String
 
   accounts Accounts[]
-
-  user_goal User_goal[]
 }
 
 model Expenditure_plan {
@@ -51,6 +49,8 @@ model Accounts {
   user_id String
 
   income Income[]
+
+  user_goal User_goal[]
 }
 
 model Income {
@@ -78,12 +78,13 @@ model Income_types {
 }
 
 model User_goal {
-  id             String   @id @unique @default(uuid())
-  name           String
-  description    String?
-  remaining_time Float
-  end_date       DateTime
+  id          String   @id @unique @default(uuid())
+  endAmount   Float
+  amount      Float
+  name        String
+  description String?
+  end_date    DateTime
 
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id String
+  accounts   Accounts @relation(fields: [account_id], references: [id])
+  account_id String
 }

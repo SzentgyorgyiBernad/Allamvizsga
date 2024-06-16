@@ -5,41 +5,52 @@ import {
   FlatList,
   StyleSheet,
   Dimensions,
-  Animated,
-  processColor,
+  Modal,
 } from "react-native";
 import React, { useEffect, useRef } from "react";
+import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
+import MyDropDown from "../../components/Molecules/MyDropDown";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../constants/colors";
 import Button from "../../components/Button";
+import MyInput from "../../components/Molecules/MyInput";
 import { useMenuScreenLogic } from "./MenuScreen.logic";
-import { GroupByChart } from "react-native-charts-wrapper";
+import { BarChart } from "react-native-gifted-charts";
 
 const { width } = Dimensions.get("window");
 
 const Menu = ({ navigation }) => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const drawerAnimation = useRef(new Animated.Value(-250)).current;
-  const [myData, setMyData] = React.useState({});
-  const [xAxis, setXAxis] = React.useState({});
+  const [visible, setVisible] = React.useState(false);
+
   const {
     accounts,
     transactionsByMonths,
     selectedAccount,
     transactions,
+    currencies,
     getAccounts,
     onLogout,
     onSetSelectedAccount,
     getLastSixMonthsIncome,
     getLastThreeTransactions,
-    setSelectedDate,
+    getAllCurrency,
+    loading,
+    error,
+    selectedCurrency,
+    setSelectedCurrency,
+    handleAccountCreate,
+    setAmount,
+    setName,
   } = useMenuScreenLogic();
   useEffect(() => {
-    console.log("UseEffect hivodik");
     getAccounts();
+    getAllCurrency();
   }, []);
 
   useEffect(() => {
+    if (!accounts) {
+      return;
+    }
     if (accounts.length > 0) {
       onSetSelectedAccount(accounts[0]);
     }
@@ -52,52 +63,6 @@ const Menu = ({ navigation }) => {
     }
   }, [selectedAccount]);
 
-  useEffect(() => {
-    const months = Object.keys(transactionsByMonths);
-    const positives = months.map((month) => ({
-      y: transactionsByMonths[month].positives,
-    }));
-    const negatives = months.map((month) => ({
-      y: transactionsByMonths[month].negatives,
-    }));
-
-    setMyData({
-      dataSets: [
-        {
-          values: positives,
-          label: "Income",
-          config: {
-            color: processColor("green"),
-          },
-        },
-        {
-          values: negatives,
-          label: "Expenditure",
-          config: {
-            color: processColor("red"),
-          },
-        },
-      ],
-      config: {
-        barWidth: 0.3,
-        group: {
-          fromX: 0,
-          groupSpace: 0.4,
-          barSpace: 0.1,
-        },
-      },
-    });
-
-    setXAxis({
-      valueFormatter: months,
-      granularityEnabled: true,
-      granularity: 1,
-      axisMaximum: months.length,
-      axisMinimum: 0,
-      centerAxisLabels: true,
-    });
-  }, [transactionsByMonths]);
-
   const flatListRef = React.useRef();
 
   const handleScorll = (event) => {
@@ -105,11 +70,88 @@ const Menu = ({ navigation }) => {
     onSetSelectedAccount(accounts[index]?.id);
   };
 
-  const renderChart = (data) => {
+  const createRow = (income, expenditure, label) => {
+    return [
+      {
+        value: income,
+        label: label,
+        frontColor: COLORS.primary,
+        spacing: 2,
+        labelWidth: 30,
+        labelTextStyle: { color: "gray" },
+        frontColor: COLORS.primary,
+      },
+      { value: expenditure, frontColor: COLORS.red },
+    ];
+  };
+
+  const customFormatter = (value) => {
+    if (value === 0) return "0";
+    if (value === 2500) return "2.5k";
+    if (value === 5000) return "5k";
+    if (value === 7500) return "7.5k";
+    if (value === 10000) return "10k";
+    return value;
+  };
+
+  const renderChart = () => {
+    if (!transactionsByMonths) {
+      return null;
+    }
+
+    const months = Object.keys(transactionsByMonths.values);
+
+    const positives = months.map((month) => ({
+      y: transactionsByMonths.values[month].positives,
+    }));
+    const negatives = months.map((month) => ({
+      y: transactionsByMonths.values[month].negatives,
+    }));
+    let barData = [];
+    positives.forEach((item, index) => {
+      const row = createRow(item.y, -negatives[index].y, months[index]);
+      barData = barData.concat(row);
+    });
+
     return (
-      <View>
-        <Text></Text>
+      <View style={{ paddingTop: 12, paddingHorizontal: 4 }}>
+        <BarChart
+          data={barData}
+          barWidth={8}
+          spacing={24}
+          roundedTop
+          roundedBottom
+          hideRules
+          xAxisThickness={0}
+          yAxisThickness={0}
+          yAxisTextStyle={{ color: "gray" }}
+          noOfSections={4}
+          maxValue={10000}
+          xAxisLabelRotation={90}
+          yAxisLabelContainerStyle={customFormatter}
+        />
       </View>
+    );
+  };
+
+  const renderCurrencies = () => {
+    if (loading) {
+      return <Text>Loading...</Text>;
+    }
+
+    // if (error) {
+    //   return <Text>Error loading currencies.</Text>;
+    // }
+    // console.log("currencies", currencies);
+
+    // if (currencies.length === 0) {
+    //   return <Text>No currencies found.</Text>;
+    // }
+    return (
+      <MyDropDown
+        items={currencies}
+        setSelectedCurrency={setSelectedCurrency}
+      />
     );
   };
 
@@ -151,8 +193,108 @@ const Menu = ({ navigation }) => {
             {item.currency.name.split(" ")[1]}
           </Text>
         </View>
-        <Text>{transactionsByMonths.values[0]}</Text>
-        {/* <View style={styles.chart}>{renderChart(transactionsByMonths)}</View> */}
+        {/* <Text>{transactionsByMonths[0]}</Text> */}
+        <View style={styles.chart}>{renderChart()}</View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingTop: 12,
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View
+              style={{
+                backgroundColor: COLORS.red,
+                width: 6,
+                height: 6,
+                borderRadius: 15,
+                marginRight: 5,
+              }}
+            ></View>
+            <Text style={{ marginRight: 20 }}>Expenditure</Text>
+            <View
+              style={{
+                backgroundColor: COLORS.primary,
+                width: 6,
+                height: 6,
+                borderRadius: 15,
+                marginRight: 5,
+              }}
+            ></View>
+            <Text>Income</Text>
+          </View>
+          <Pressable
+            onPress={() => {
+              setVisible(true);
+            }}
+            style={{
+              backgroundColor: COLORS.grey,
+              paddingVertical: 2,
+              paddingHorizontal: 6,
+              borderRadius: 5,
+              marginLeft: 16,
+            }}
+          >
+            <Text style={{ color: COLORS.white }}>New account</Text>
+          </Pressable>
+        </View>
+        <Modal
+          style={{ backgroundColor: COLORS.white }}
+          animationType="slide"
+          transparent={true}
+          visible={visible}
+          onRequestClose={() => {
+            setVisible(!visible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={{ fontSize: 22 }}>Add New Account</Text>
+              <View>
+                <ProgressSteps>
+                  <ProgressStep label="Currency">
+                    <View style={{ alignItems: "center", paddingVertical: 12 }}>
+                      <Text style={{ fontSize: 22 }}>Select currency</Text>
+                      <Text style={{ textAlign: "center" }}>
+                        We will create a default, Main account for you, which
+                        you will not be able to delete.
+                      </Text>
+                      <View style={styles.currencyListContainer}>
+                        {renderCurrencies()}
+                        {/* {console.log(currencies)} */}
+                      </View>
+                    </View>
+                  </ProgressStep>
+                  <ProgressStep
+                    label="Next Step"
+                    onSubmit={() => {
+                      handleAccountCreate();
+                    }}
+                  >
+                    <View
+                      style={{ paddingHorizontal: 12, paddingVertical: 12 }}
+                    >
+                      <Text style={{ textAlign: "center" }}>
+                        Enter your starting balance. This is the value you
+                        currently have.
+                      </Text>
+                      <MyInput
+                        style={styles.input}
+                        placeholder="Enter you start balance..."
+                        onChangeText={(value) => setAmount(value)}
+                      ></MyInput>
+                    </View>
+                  </ProgressStep>
+                </ProgressSteps>
+              </View>
+
+              <Pressable onPress={() => setVisible(false)}>
+                <Text>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   };
@@ -293,5 +435,27 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 20,
     borderWidth: 1,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: "80%", // Szélesség beállítása
+    height: 400, // Magasság beállítása
   },
 });

@@ -3,6 +3,7 @@ import AccountCreateRepository from "../Repositories/AccountCreateRepository/Acc
 import AccountRepository from "../Repositories/AccountRepository/AccountRepository";
 import TransactionRepository from "../Repositories/Transactions/TransactionRepository";
 import IncomeRepository from "../Repositories/IncomeRepository/IncomeRepository";
+import ExpenditureRepository from "../Repositories/ExpenditureRepository/ExpenditureRepository";
 
 export default class RepositoryService {
   static instance;
@@ -21,4 +22,5 @@ export default class RepositoryService {
   accountRepository = new AccountRepository();
   transactionRepository = new TransactionRepository();
   incomeRepository = new IncomeRepository();
+  expenditureRepository = new ExpenditureRepository();
 }

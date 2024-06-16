@@ -49,7 +49,7 @@ async function login(email, password) {
 }
 
 function createToken(user) {
-  const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "5d" });
   tokenCache.set(token, undefined);
   return token;
 }

@@ -1,22 +1,26 @@
 import BaseRepository from "../BaseRepository";
 
 export default class TransactionRepository extends BaseRepository {
-  async getAllTransaction() {
-    response = await this.api.get("transactionType/allTransactionType");
-    return response;
-  }
-
-  async getIncomeByMonths(body, token) {
-    response = await this.api.get("transaction/incomeByMonths", {
-      body,
+  async getAllTransaction(token) {
+    response = await this.api.get("transactionType/allTransactionType", {
       token,
     });
     return response;
   }
 
+  async getIncomeByMonths(body, token) {
+    // console.log("getIncomeByMonths in repository", body);
+    response = await this.api.get("transaction/incomeByMonths/" + body, {
+      body,
+      token,
+    });
+    // console.log("response", response);
+    return response;
+  }
+
   async getLastThreeTransactions(body, token) {
     // console.log("getLastThreeTransactions in repository", body);
-    response = await this.api.get("transaction/lastThreeTransactions", {
+    response = await this.api.get("transaction/lastThreeTransactions/" + body, {
       body,
       token,
     });

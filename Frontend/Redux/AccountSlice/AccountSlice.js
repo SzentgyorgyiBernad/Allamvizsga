@@ -17,10 +17,10 @@ export const getAllAccounts = createAsyncThunk(
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
     // console.log("token", token);
-    const response = await repositoryService.accountRepository.getAllAccount({
-      token,
-    });
-    console.log("response", response);
+    const response = await repositoryService.accountRepository.getAllAccount(
+      token
+    );
+    // console.log("response", response);
     return response;
   }
 );

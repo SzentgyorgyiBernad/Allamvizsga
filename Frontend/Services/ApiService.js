@@ -1,5 +1,8 @@
+// import { logout } from "../Redux/Auth/AuthSlice";
+// import { store } from "../Redux/store";
+
 export default class ApiService {
-  baseUrl = "http://192.168.1.7:8000";
+  baseUrl = "http://192.168.0.191:8000";
 
   static instance = null;
 
@@ -15,7 +18,8 @@ export default class ApiService {
   async fetchData(endPoint, method, options) {
     // console.log("Api fetch:", this.baseUrl, endPoint, method, options);
     // console.log("Api fetch:", options, method, endPoint);
-    // console.log("Api fetch:");
+    console.log("Api fetch:", options, endPoint);
+    console.log("Api fetch:", JSON.stringify(options?.body));
     try {
       const response = await fetch(`${this.baseUrl}/${endPoint}`, {
         method,
@@ -35,15 +39,19 @@ export default class ApiService {
       // console.log("ApiService fetch data", response);
       return await response.json();
     } catch (error) {
+      // if (error.status === 400 || error.status === 401) {
+      //   store.dispatch(logout());
+      // }
       console.log("Error while fetching: ", error);
       return null;
     }
   }
 
   async get(endPoint, options) {
-    // console.log("ApiService get", options);
+    // console.log(endPoint);
+    // console.log("Amit kapok a repositorybol: ", options);
     return await this.fetchData(endPoint, "GET", {
-      token: options?.body.token,
+      token: options?.token,
     });
   }
 

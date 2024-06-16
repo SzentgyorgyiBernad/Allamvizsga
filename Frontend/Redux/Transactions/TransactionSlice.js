@@ -14,20 +14,27 @@ export const getAllTransactionTypes = createAsyncThunk(
   "transaction/allTransactionTypes",
   async () => {
     // console.log("get all transaction types from db");
+    const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
     const response =
-      await repositoryService.transactionRepository.getAllTransaction();
+      await repositoryService.transactionRepository.getAllTransaction(token);
     // console.log("response from fetch", response);
     return response;
   }
 );
 
 export const getIncomeByMonths = createAsyncThunk(
-  "transaction/getIncomeByMOnths",
+  "transaction/getIncomeByMonths",
   async (data) => {
+    const token = await AsyncStorage.getItem("token");
+    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const response =
-      await repositoryService.transactionRepository.getIncomeByMonths(data);
+      await repositoryService.transactionRepository.getIncomeByMonths(
+        data,
+        token
+      );
+    // console.log("response from fetch", response);
     return response;
   }
 );
@@ -35,18 +42,21 @@ export const getIncomeByMonths = createAsyncThunk(
 export const getLastThreeTransaction = createAsyncThunk(
   "transaction/getLastThreeTransactions",
   async (data) => {
+    const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.transactionRepository.getLastThreeTransactions(
-        data
+        data,
+        token
       );
+    // console.log("response from fetch", response);
     return response;
   }
 );
 
 export const createNewTransaction = createAsyncThunk(
   "transaction/createNewTransaction",
-  async (transaction) => {
+  async (data) => {
     // console.log("create new transaction in db", transaction);
     // console.log("Account", )
     const token = await AsyncStorage.getItem("token");
@@ -54,7 +64,7 @@ export const createNewTransaction = createAsyncThunk(
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.transactionRepository.createTransaction(
-        transaction,
+        data,
         token
       );
     // console.log("response from fetch", response);
@@ -65,7 +75,14 @@ export const createNewTransaction = createAsyncThunk(
 export const transactionSlice = createSlice({
   name: "transaction",
   initialState,
-  reducers: {},
+  reducers: {
+    addToTransaction: (state, action) => {
+      // console.log("state", state.transactions);
+      // console.log("action.payload", action.payload);
+      state.transactions.values.pop();
+      state.transactions.values.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllTransactionTypes.pending, (state) => {
       state.loading = true;
@@ -84,6 +101,9 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(createNewTransaction.fulfilled, (state, action) => {
       state.loading = false;
+      state.transactions.values.pop();
+      // console.log("builder", action.payload.values.value);
+      state.transactions.values.unshift(action.payload.values.value);
       // console.log("builder", action.payload);
     });
     builder.addCase(createNewTransaction.rejected, (state) => {
@@ -107,14 +127,16 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(getLastThreeTransaction.fulfilled, (state, action) => {
       state.loading = false;
-      console.log("builder", action.payload.values);
+      // console.log("builder", action.payload.values);
       state.transactions = action.payload.values;
     });
     builder.addCase(getLastThreeTransaction.rejected, (state) => {
       state.loading = false;
+      // console.log("builder", action.payload.error);
       state.error = action.payload.error;
     });
   },
 });
 
 export default transactionSlice.reducer;
+export const { addToTransaction } = transactionSlice.actions;

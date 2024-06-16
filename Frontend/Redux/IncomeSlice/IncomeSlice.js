@@ -10,18 +10,21 @@ const initialState = {
   loading: false,
   error: undefined,
   transactions: [],
+  totalAmount: 0,
   budget: null,
   plannedTransactions: [],
-  compareToLastMonth: 0,
+  compareToLastMonthPercentage: 0,
+  goals: [],
 };
 
-export const getTransactionsFromSpecDate = createAsyncThunk(
-  "transaction/getTransactionsFromSpecDate",
+export const getTransactionsFromCurrentMonth = createAsyncThunk(
+  "income/getTransactionsFromSpecDate",
   async (data) => {
+    // console.log("getTransactionsFromCurrentMonth", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response =
-      await repositoryService.transactionRepository.getMyTransactionsFromSpecDate(
+      await repositoryService.incomeRepository.getMyTransactionsFromCurrentMonth(
         data,
         token
       );
@@ -30,12 +33,12 @@ export const getTransactionsFromSpecDate = createAsyncThunk(
 );
 
 export const getPlannedTransactions = createAsyncThunk(
-  "transaction/getPlannedTransactions",
+  "income/getPlannedTransactions",
   async (data) => {
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response =
-      await repositoryService.transactionRepository.getMyPlannedTransactions(
+      await repositoryService.incomeRepository.getMyPlannedTransactions(
         data,
         token
       );
@@ -44,12 +47,12 @@ export const getPlannedTransactions = createAsyncThunk(
 );
 
 export const compareToLastMonth = createAsyncThunk(
-  "transaction/compareToLastMonth",
+  "income/compareToLastMonth",
   async (data) => {
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response =
-      await repositoryService.transactionRepository.compareToMyLastMonth(
+      await repositoryService.incomeRepository.compareToMyLastMonth(
         data,
         token
       );
@@ -57,19 +60,102 @@ export const compareToLastMonth = createAsyncThunk(
   }
 );
 
+export const createGoal = createAsyncThunk(
+  "income/createGoal",
+  async (data) => {
+    console.log("data", data);
+    const repositoryService = new RepositoryService();
+    const token = await AsyncStorage.getItem("token");
+    const response = await repositoryService.incomeRepository.createMyGoal(
+      data,
+      token
+    );
+    console.log("response", response);
+    return response;
+  }
+);
+
+export const getGoals = createAsyncThunk("income/getGoals", async (data) => {
+  const repositoryService = new RepositoryService();
+  const token = await AsyncStorage.getItem("token");
+  const response = await repositoryService.incomeRepository.getMyGoals(
+    data,
+    token
+  );
+  return response;
+});
+
+export const addMoneyToGoals = createAsyncThunk(
+  "income/addMoneyToGoals",
+  async (data) => {
+    console.log("data", data);
+    const repositoryService = new RepositoryService();
+    const token = await AsyncStorage.getItem("token");
+    const response = await repositoryService.incomeRepository.addMoneyToGoal(
+      data,
+      token
+    );
+    return response;
+  }
+);
+
 export const incomeSlice = createSlice({
   name: "income",
   initialState,
-  reducers: {},
+  reducers: {
+    addIncome: (state, action) => {
+      // console.log("all", state.transactions);
+      // console.log("addIncome", action.payload);
+      const now = new Date();
+      const newTransaction = {
+        ...action.payload,
+        date: new Date(action.payload.newDate).toISOString(), // Visszaalakítás Date objektummá
+      };
+      const currentDate = new Date();
+      const transactionDate = new Date(newTransaction.date);
+
+      if (transactionDate <= currentDate) {
+        state.transactions = [newTransaction, ...state.transactions];
+        state.totalAmount =
+          parseInt(state.totalAmount) + parseInt(newTransaction.amount);
+      } else {
+        const newTransactionDaysRemaining = Math.ceil(
+          (new Date(newTransaction.date) - now) / (1000 * 60 * 60 * 24)
+        );
+        newTransaction.daysRemaining = newTransactionDaysRemaining;
+        state.plannedTransactions = [
+          newTransaction,
+          ...state.plannedTransactions,
+        ];
+      }
+    },
+    addMoneyToGoal: (state, action) => {
+      console.log(
+        "addMoneyToGoal",
+        action.payload.amount,
+        "es",
+        action.payload.goalId
+      );
+      const goal = state.goals.find(
+        (goal) => goal.id === action.payload.goalId
+      );
+      goal.amount = parseInt(goal.amount) + parseInt(action.payload.amount);
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(getTransactionsFromSpecDate.pending, (state) => {
+    builder.addCase(getTransactionsFromCurrentMonth.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(getTransactionsFromSpecDate.fulfilled, (state, action) => {
-      state.loading = false;
-      state.transactions = action.payload.values;
-    });
-    builder.addCase(getTransactionsFromSpecDate.rejected, (state) => {
+    builder.addCase(
+      getTransactionsFromCurrentMonth.fulfilled,
+      (state, action) => {
+        state.loading = false;
+        // console.log("action.payload", action.payload.values);
+        state.transactions = action.payload.values.transactions;
+        state.totalAmount = action.payload.values.totalIncome;
+      }
+    );
+    builder.addCase(getTransactionsFromCurrentMonth.rejected, (state) => {
       state.loading = false;
       state.error = action.payload.error;
     });
@@ -78,7 +164,8 @@ export const incomeSlice = createSlice({
     });
     builder.addCase(getPlannedTransactions.fulfilled, (state, action) => {
       state.loading = false;
-      state.plannedTransactions = action.payload.values;
+      // console.log("action.payload planned income", action.payload);
+      state.plannedTransactions = action.payload.values.values;
     });
     builder.addCase(getPlannedTransactions.rejected, (state) => {
       state.loading = false;
@@ -89,9 +176,45 @@ export const incomeSlice = createSlice({
     });
     builder.addCase(compareToLastMonth.fulfilled, (state, action) => {
       state.loading = false;
-      state.compareToLastMonth = action.payload.values;
+      // console.log("action.payload comparte", action.payload);
+      state.compareToLastMonthPercentage = action.payload.values;
     });
     builder.addCase(compareToLastMonth.rejected, (state) => {
+      state.loading = false;
+      state.error = action.payload.error;
+    });
+    builder.addCase(createGoal.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(createGoal.fulfilled, (state, action) => {
+      state.loading = false;
+      state.goals.push(action.payload.values.values);
+      console.log("state.goals", state.goals);
+    });
+    builder.addCase(createGoal.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload.error;
+    });
+    builder.addCase(getGoals.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getGoals.fulfilled, (state, action) => {
+      state.loading = false;
+      console.log("action.payload", action.payload.values.values);
+      state.goals = action.payload.values.values;
+    });
+    builder.addCase(getGoals.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload.error;
+    });
+    builder.addCase(addMoneyToGoals.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(addMoneyToGoals.fulfilled, (state, action) => {
+      state.loading = false;
+      // console.log("action.payload", action.payload);
+    });
+    builder.addCase(addMoneyToGoals.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload.error;
     });
@@ -99,3 +222,4 @@ export const incomeSlice = createSlice({
 });
 
 export default incomeSlice.reducer;
+export const { addIncome, addMoneyToGoal } = incomeSlice.actions;

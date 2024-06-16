@@ -4,6 +4,7 @@ import accountCreateReducer from "../Redux/AccountCreate/AccountCreateSlice";
 import accountReducer from "../Redux/AccountSlice/AccountSlice";
 import transactionReducer from "../Redux/Transactions/TransactionSlice";
 import incomeReducer from "../Redux/IncomeSlice/IncomeSlice";
+import expenditureReducer from "../Redux/Expenditure/ExpenditureSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     accountReducer,
     transactionReducer,
     incomeReducer,
+    expenditureReducer,
   },
 });

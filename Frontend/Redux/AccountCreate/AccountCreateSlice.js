@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import RepositoryService from "../../Services/RepositoryService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const initialState = {
   currencies: [],
@@ -10,18 +11,16 @@ const initialState = {
 
 export const getAllCurrencyFromDB = createAsyncThunk(
   "currency/allCurrency",
-  async (_, { rejectWithValue }) => {
+  async () => {
     // console.log("get all currency from db");
     const repositoryService = new RepositoryService();
+    // console.log("repositoryService");
+    const token = await AsyncStorage.getItem("token");
+    // console.log("token", token);
     const response =
-      await repositoryService.accountCreateRepository.getAllCurrency();
+      await repositoryService.accountCreateRepository.getAllCurrency(token);
     // console.log("response from fetch", response);
-    if (response.error) {
-      return rejectWithValue({ error: response.error });
-    } else {
-      // console.log("redx", response);
-      return response;
-    }
+    return response;
   }
 );
 
@@ -29,11 +28,13 @@ export const createDefaultAccount = createAsyncThunk(
   "account/createDefaultAccount",
   async (data, { rejectWithValue }) => {
     // console.log("createDefaultAccount", data);
+    const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
     const response =
-      await repositoryService.accountCreateRepository.createDefaultAccount(
-        data
-      );
+      await repositoryService.accountCreateRepository.createDefaultAccount({
+        data,
+        token,
+      });
     if (response.error) {
       return rejectWithValue({ error: response.error });
     } else {
@@ -53,7 +54,8 @@ export const accountCreateSlice = createSlice({
     builder.addCase(getAllCurrencyFromDB.fulfilled, (state, action) => {
       state.loading = false;
       // console.log("builder currencies", action.payload);
-      state.currencies = action.payload;
+      state.currencies = action.payload.values;
+      // console.log("state.currencies", state.currencies);
     });
     builder.addCase(getAllCurrencyFromDB.rejected, (state) => {
       state.loading = false;

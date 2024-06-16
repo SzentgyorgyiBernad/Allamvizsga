@@ -3,7 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   getAllTransactionTypes,
   createNewTransaction,
+  addToTransaction,
 } from "../../Redux/Transactions/TransactionSlice";
+import uuid from "react-native-uuid";
+import { addIncome } from "../../Redux/IncomeSlice/IncomeSlice";
 
 export const useAddNewTransactionScreenLogic = () => {
   const [selectedTransaction, setSelectedTransaction] = React.useState(null);
@@ -26,11 +29,13 @@ export const useAddNewTransactionScreenLogic = () => {
   };
 
   const handleTransactionSubmit = (date) => {
+    const newDate = date.toISOString();
     if (selectedTransaction === "Expenditure") {
       dispatch(
         createNewTransaction({
+          id: uuid.v4(),
           selectedTransaction,
-          selectedTransactionType,
+          selectedTransactionType: selectedTransactionType.id,
           amount: amount * -1,
           description,
           repetablePeriod,
@@ -39,11 +44,27 @@ export const useAddNewTransactionScreenLogic = () => {
           selectedAccount: selectedAccount.id,
         })
       );
+      const newTransaction = {
+        id: uuid.v4(),
+        selectedTransaction,
+        income_type: {
+          name: selectedTransactionType.name,
+        },
+        amount: amount * -1,
+        note: description,
+        repetablePeriod,
+        repetable: isEnabled,
+        newDate,
+        selectedAccount: selectedAccount.id,
+      };
+      dispatch(addIncome(newTransaction));
+      console.log(newTransaction);
     } else {
       dispatch(
         createNewTransaction({
+          id: uuid.v4(),
           selectedTransaction,
-          selectedTransactionType,
+          selectedTransactionType: selectedTransactionType.id,
           amount,
           description,
           repetablePeriod,
@@ -52,6 +73,21 @@ export const useAddNewTransactionScreenLogic = () => {
           selectedAccount: selectedAccount.id,
         })
       );
+      const newTransaction = {
+        id: uuid.v4(),
+        selectedTransaction,
+        income_type: {
+          name: selectedTransactionType.name,
+        },
+        amount,
+        note: description,
+        repetablePeriod,
+        repetable: isEnabled,
+        newDate,
+        selectedAccount: selectedAccount.id,
+      };
+      dispatch(addIncome(newTransaction));
+      console.log(newTransaction);
     }
     // console.log(
     //   amount,
