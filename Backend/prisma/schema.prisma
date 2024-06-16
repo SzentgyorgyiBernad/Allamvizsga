@@ -22,16 +22,16 @@ model User {
 }
 
 model Expenditure_plan {
-  id String @id @unique @default(uuid())
+  id     String @id @unique @default(uuid())
+  amount Float
 
-  income_type    Income_types @relation(fields: [income_type_id], references: [id])
-  income_type_id Int
+  account    Accounts @relation(fields: [account_id], references: [id])
+  account_id String
 }
 
 model Currency {
   id   Int    @unique
   name String
-  // value Float
 
   accounts Accounts[]
 }
@@ -48,9 +48,9 @@ model Accounts {
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
 
-  income Income[]
-
-  user_goal User_goal[]
+  income           Income[]
+  user_goal        User_goal[]
+  expenditure_plan Expenditure_plan[]
 }
 
 model Income {
@@ -73,8 +73,7 @@ model Income_types {
   name      String
   in_or_out String
 
-  income           Income[]
-  expenditure_plan Expenditure_plan[]
+  income Income[]
 }
 
 model User_goal {

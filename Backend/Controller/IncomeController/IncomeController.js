@@ -48,9 +48,9 @@ module.exports = class IncomeController {
   async createGoal(req, res) {
     try {
       const { body } = req.body;
-      console.log("body", body);
+      // console.log("body", body);
       const response = await IncomeRepository.createMyGoal(body);
-      console.log("response", response);
+      // console.log("response", response);
       res.status(200).json({ values: response });
     } catch (error) {
       console.log("Erro a cathcnbben", error.message);

@@ -179,7 +179,7 @@ async function getMyPlannedTransactions(accountId) {
 
 async function createMyGoal(data) {
   try {
-    console.log("data", data);
+    // console.log("data", data);
     const response = await prisma.user_goal.create({
       data: {
         id: data.id,
@@ -195,7 +195,7 @@ async function createMyGoal(data) {
         },
       },
     });
-    console.log("response", response);
+    // console.log("response", response);
 
     return { values: response };
   } catch (error) {
@@ -230,7 +230,7 @@ async function getMyGoals(accountId) {
 
 async function addMoneyToGoals(data) {
   try {
-    console.log("data", data);
+    // console.log("data", data);
     const goal = await prisma.user_goal.findUnique({
       where: {
         id: data.id,

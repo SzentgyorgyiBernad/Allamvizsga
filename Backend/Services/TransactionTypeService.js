@@ -10,7 +10,7 @@ async function getAllTransactionType() {
         in_or_out: true,
       },
     });
-    console.log("transactionTypes", transactionTypes);
+    // console.log("transactionTypes", transactionTypes);
 
     return { transactionTypes: transactionTypes };
   } catch (error) {
@@ -101,7 +101,6 @@ async function getLastThreeTransaction(accountId) {
 
 async function createTransaction(body) {
   try {
-    // console.log("body", body);
     const transaction = await prisma.income.create({
       data: {
         id: body.id,

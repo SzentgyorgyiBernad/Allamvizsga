@@ -9,9 +9,9 @@ async function getAllCurrency() {
         name: true,
       },
     });
-    console.log(currencies);
+    // console.log(currencies);
     const currencyValues = currencies.map((item) => item.name);
-    console.log("Currency service", currencyValues);
+    // console.log("Currency service", currencyValues);
     return { currencies: currencyValues };
   } catch (error) {
     // console.log(error.message);

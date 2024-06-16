@@ -51,6 +51,11 @@ app.get(
   authMiddleware.authJWT,
   accountController.getAllAccount
 );
+app.delete(
+  "/account/deleteAccount/:id",
+  authMiddleware.authJWT,
+  defaultAccountController.accountDelete
+);
 //TransactionType
 app.get(
   "/transactionType/allTransactionType",
@@ -116,8 +121,18 @@ app.get(
   expenditureController.getComparePercantage
 );
 app.get(
-  "/expenditure/getMyPlannedTransactions/:id",
+  "/expenditure/getMyPlannedExpenditures/:id",
   authMiddleware.authJWT,
   expenditureController.getPlannedExpenditures
+);
+app.post(
+  "/expenditure/createBudget",
+  authMiddleware.authJWT,
+  expenditureController.createBudget
+);
+app.get(
+  "/expenditure/getMyBudget/:id",
+  authMiddleware.authJWT,
+  expenditureController.getMyBudget
 );
 app.listen(8000, () => console.log("The server is running on: 8000"));

@@ -40,6 +40,7 @@ export const login = createAsyncThunk(
     } else {
       await AsyncStorage.setItem("token", response.token);
       await AsyncStorage.setItem("email", response.email);
+      console.log("response", response);
       return response;
     }
   }
@@ -48,7 +49,7 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async (data, { rejectWithValue }) => {
-    console.log("data", data);
+    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const response = await repositoryService.authRepository.register(data);
     if (response.error) {

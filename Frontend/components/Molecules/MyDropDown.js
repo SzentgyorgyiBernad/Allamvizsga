@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 const MyDropDown = ({ items, setSelectedCurrency }) => {
-  const [selectedValue, setSelectedValue] = useState(items.values[0]);
+  const [selectedValue, setSelectedValue] = useState(items[0]);
   // console.log("items", items.values[0]);
 
   const handleValueChange = (itemValue, itemIndex) => {

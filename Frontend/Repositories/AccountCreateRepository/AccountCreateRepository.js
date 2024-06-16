@@ -7,9 +7,12 @@ export default class AccountCreateRepository extends BaseRepository {
     // console.log("response from repo", response);
     return response;
   }
-  async createDefaultAccount(body) {
+  async createDefaultAccount(body, token) {
     // console.log("createDefaultAccount in repository", body);
-    response = await this.api.post("account/createDefaultAccount", { body });
+    response = await this.api.post("account/createDefaultAccount", {
+      body,
+      token,
+    });
     return response;
   }
 }

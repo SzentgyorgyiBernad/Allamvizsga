@@ -25,6 +25,19 @@ export const getAllAccounts = createAsyncThunk(
   }
 );
 
+export const deleteAccount = createAsyncThunk(
+  "account/deleteAccount",
+  async (data) => {
+    const token = await AsyncStorage.getItem("token");
+    const repositoryService = new RepositoryService();
+    const response = await repositoryService.accountRepository.deleteMyAccount(
+      data,
+      token
+    );
+    return response;
+  }
+);
+
 export const accountSlice = createSlice({
   name: "account",
   initialState,
@@ -32,6 +45,20 @@ export const accountSlice = createSlice({
     setSelectedAccount: (state, action) => {
       // console.log("action.payload", action.payload);
       state.selectedAccount = action.payload;
+    },
+    addAmountToSelectedAccount: (state, action) => {
+      const account = state.accounts.find(
+        (account) => account.id === state.selectedAccount.id
+      );
+
+      if (account) {
+        account.amount =
+          parseFloat(account.amount) + parseFloat(action.payload.amount);
+        state.selectedAccount.amount = account.amount;
+      }
+    },
+    addToAccounts: (state, action) => {
+      state.accounts.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -52,4 +79,5 @@ export const accountSlice = createSlice({
 });
 
 export default accountSlice.reducer;
-export const { setSelectedAccount } = accountSlice.actions;
+export const { setSelectedAccount, addToAccounts, addAmountToSelectedAccount } =
+  accountSlice.actions;

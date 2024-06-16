@@ -44,6 +44,7 @@ export const getLastThreeTransaction = createAsyncThunk(
   async (data) => {
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
+    // console.log("data", data);
     const response =
       await repositoryService.transactionRepository.getLastThreeTransactions(
         data,
@@ -75,14 +76,7 @@ export const createNewTransaction = createAsyncThunk(
 export const transactionSlice = createSlice({
   name: "transaction",
   initialState,
-  reducers: {
-    addToTransaction: (state, action) => {
-      // console.log("state", state.transactions);
-      // console.log("action.payload", action.payload);
-      state.transactions.values.pop();
-      state.transactions.values.push(action.payload);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllTransactionTypes.pending, (state) => {
       state.loading = true;
@@ -101,7 +95,9 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(createNewTransaction.fulfilled, (state, action) => {
       state.loading = false;
-      state.transactions.values.pop();
+      if (state.transactions.values.length > 3) {
+        state.transactions.values.pop();
+      }
       // console.log("builder", action.payload.values.value);
       state.transactions.values.unshift(action.payload.values.value);
       // console.log("builder", action.payload);
@@ -139,4 +135,3 @@ export const transactionSlice = createSlice({
 });
 
 export default transactionSlice.reducer;
-export const { addToTransaction } = transactionSlice.actions;

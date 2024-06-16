@@ -41,8 +41,10 @@ const Menu = ({ navigation }) => {
     handleAccountCreate,
     setAmount,
     setName,
+    onDeleteAccount,
   } = useMenuScreenLogic();
   useEffect(() => {
+    // console.log("useEffect getAccounts es getAllCurrency");
     getAccounts();
     getAllCurrency();
   }, []);
@@ -53,11 +55,15 @@ const Menu = ({ navigation }) => {
     }
     if (accounts.length > 0) {
       onSetSelectedAccount(accounts[0]);
+      // console.log("useEffect onSetSelectedAccount az elso", accounts[0]);
     }
   }, [accounts]);
 
   useEffect(() => {
     if (selectedAccount) {
+      // console.log(
+      //   "useEffect getLastSixMonthsIncome es getLastThreeTransactions"
+      // );
       getLastSixMonthsIncome();
       getLastThreeTransactions();
     }
@@ -67,7 +73,8 @@ const Menu = ({ navigation }) => {
 
   const handleScorll = (event) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
-    onSetSelectedAccount(accounts[index]?.id);
+    // console.log("Amit beallit: ", accounts[index]);
+    onSetSelectedAccount(accounts[index]);
   };
 
   const createRow = (income, expenditure, label) => {
@@ -147,6 +154,7 @@ const Menu = ({ navigation }) => {
     // if (currencies.length === 0) {
     //   return <Text>No currencies found.</Text>;
     // }
+    // console.log("currencies", currencies);
     return (
       <MyDropDown
         items={currencies}
@@ -156,6 +164,7 @@ const Menu = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => {
+    if (!item) return null;
     return (
       <View style={styles.card}>
         <View style={{ flexDirection: "row" }}>
@@ -193,7 +202,20 @@ const Menu = ({ navigation }) => {
             {item.currency.name.split(" ")[1]}
           </Text>
         </View>
-        {/* <Text>{transactionsByMonths[0]}</Text> */}
+        <Pressable
+          onPress={() => {
+            setVisible(true);
+          }}
+          style={{
+            backgroundColor: COLORS.grey,
+            paddingVertical: 2,
+            paddingHorizontal: 6,
+            borderRadius: 5,
+            marginLeft: 16,
+          }}
+        >
+          <Text style={{ color: COLORS.white }}>New account</Text>
+        </Pressable>
         <View style={styles.chart}>{renderChart()}</View>
         <View
           style={{
@@ -224,21 +246,8 @@ const Menu = ({ navigation }) => {
             ></View>
             <Text>Income</Text>
           </View>
-          <Pressable
-            onPress={() => {
-              setVisible(true);
-            }}
-            style={{
-              backgroundColor: COLORS.grey,
-              paddingVertical: 2,
-              paddingHorizontal: 6,
-              borderRadius: 5,
-              marginLeft: 16,
-            }}
-          >
-            <Text style={{ color: COLORS.white }}>New account</Text>
-          </Pressable>
         </View>
+
         <Modal
           style={{ backgroundColor: COLORS.white }}
           animationType="slide"
@@ -250,6 +259,12 @@ const Menu = ({ navigation }) => {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
+              <Pressable
+                onPress={() => setVisible(false)}
+                style={{ position: "absolute", top: 5, right: 5, padding: 12 }}
+              >
+                <Text>Close</Text>
+              </Pressable>
               <Text style={{ fontSize: 22 }}>Add New Account</Text>
               <View>
                 <ProgressSteps>
@@ -257,19 +272,18 @@ const Menu = ({ navigation }) => {
                     <View style={{ alignItems: "center", paddingVertical: 12 }}>
                       <Text style={{ fontSize: 22 }}>Select currency</Text>
                       <Text style={{ textAlign: "center" }}>
-                        We will create a default, Main account for you, which
-                        you will not be able to delete.
+                        Select a currency for the new account.
                       </Text>
-                      <View style={styles.currencyListContainer}>
-                        {renderCurrencies()}
-                        {/* {console.log(currencies)} */}
-                      </View>
+                      <View style={{ flex: 1 }}>{renderCurrencies()}</View>
                     </View>
                   </ProgressStep>
                   <ProgressStep
-                    label="Next Step"
-                    onSubmit={() => {
-                      handleAccountCreate();
+                    label="Balance"
+                    previousBtnStyle={{
+                      marginRight: 10,
+                    }}
+                    nextBtnStyle={{
+                      marginLeft: 20,
                     }}
                   >
                     <View
@@ -281,17 +295,33 @@ const Menu = ({ navigation }) => {
                       </Text>
                       <MyInput
                         style={styles.input}
-                        placeholder="Enter you start balance..."
+                        placeholder="Enter your start balance..."
                         onChangeText={(value) => setAmount(value)}
-                      ></MyInput>
+                      />
+                    </View>
+                  </ProgressStep>
+                  <ProgressStep
+                    label="Name"
+                    onSubmit={() => {
+                      handleAccountCreate();
+                      setVisible(false);
+                    }}
+                  >
+                    <View
+                      style={{ paddingHorizontal: 12, paddingVertical: 12 }}
+                    >
+                      <Text style={{ textAlign: "center" }}>
+                        Enter the name of the account.
+                      </Text>
+                      <MyInput
+                        style={styles.input}
+                        placeholder="Enter account name..."
+                        onChangeText={(value) => setName(value)}
+                      />
                     </View>
                   </ProgressStep>
                 </ProgressSteps>
               </View>
-
-              <Pressable onPress={() => setVisible(false)}>
-                <Text>Close</Text>
-              </Pressable>
             </View>
           </View>
         </Modal>
@@ -300,6 +330,7 @@ const Menu = ({ navigation }) => {
   };
 
   const renderLastThreeTransaction = (item) => {
+    // console.log("item", item.item);
     const textColor = item.item.amount > 0 ? COLORS.primary : COLORS.red;
     const amountText =
       item.item.amount > 0 ? `+${item.item.amount}` : item.item.amount;
@@ -333,6 +364,48 @@ const Menu = ({ navigation }) => {
     );
   };
 
+  const renderFlatListWithLastThreeTransactions = () => {
+    // console.log("transactions", transactions);
+    if (transactions.values.length === 0) {
+      return (
+        <View>
+          <Text>There is no transactions yet!</Text>
+        </View>
+      );
+    }
+    return (
+      <FlatList
+        data={transactions?.values}
+        renderItem={renderLastThreeTransaction}
+        keyExtractor={(item) => item.id}
+      ></FlatList>
+    );
+  };
+
+  const renderAccounts = () => {
+    // console.log("accounts", accounts);
+    if (!accounts) {
+      return <Text>Loading...</Text>;
+    }
+
+    if (accounts.length === 0) {
+      return <Text>No accounts found.</Text>;
+    }
+
+    return (
+      <FlatList
+        data={accounts}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScorll}
+        ref={flatListRef}
+      ></FlatList>
+    );
+  };
+
   return (
     <LinearGradient
       style={{
@@ -354,28 +427,13 @@ const Menu = ({ navigation }) => {
         <Text style={{ fontSize: 22 }}>Overview</Text>
       </View>
 
-      <View style={styles.accountCard}>
-        <FlatList
-          data={accounts}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={handleScorll}
-          ref={flatListRef}
-        ></FlatList>
-      </View>
+      <View style={styles.accountCard}>{renderAccounts()}</View>
 
       <View style={styles.bottomCard}>
         <Text style={{ fontSize: 22, paddingBottom: 8 }}>
           Recent transactions
         </Text>
-        <FlatList
-          data={transactions.values}
-          renderItem={renderLastThreeTransaction}
-          keyExtractor={(item) => item.id}
-        ></FlatList>
+        {renderFlatListWithLastThreeTransactions()}
       </View>
     </LinearGradient>
   );
@@ -456,6 +514,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: "80%", // Szélesség beállítása
-    height: 400, // Magasság beállítása
+    height: 450, // Magasság beállítása
   },
 });

@@ -12,6 +12,10 @@ const IncomeScren = () => {
   const [addModalVisible, setAddModalVisible] = React.useState(false);
   const [viewModalVisible, setViewModalVisible] = React.useState(false);
   const [dateVisible, setDateVisible] = React.useState(false);
+  const [addAmount, setAddAmount] = React.useState(0);
+  const [addVisible, setAddVisible] = React.useState(false);
+  const [visibleAllIncome, setVisibleAllIncome] = React.useState(false);
+  const [visibleAllPlannedIncome, setVisibleAllPlannedIncome] = React.useState(false);
 
   const {
     transactions,
@@ -42,22 +46,29 @@ const IncomeScren = () => {
     } = useIncomeScreenLogic();
 
   useEffect(() => {
+
     getTransactions()
     getMyPlannedTransactions()
     getCompareToLastMonth()
     getMyGoals()
-  }, []);
+  }, [selectedAccount]);
 
   const renderPercentage = (data) => {
-    if(data === 0) {
+    if(data === "Infinity") {
+        return(
+          <View style={{flexDirection: 'row', gap: 8, width: "90%", height: 50, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{color: 'black', fontSize: 18}}>100%</Text>
+          </View>
+        )
+      }
+    if(data === "NaN") {
       return (
         <View style={{flexDirection: 'row', gap: 8, width: "90%", height: 50, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{color: 'black', fontSize: 18}}>0%</Text>
         </View>
       )
     }
-    if(data > 0) {
-      // const newData = data.toFixed(2)
+    if(data >= 0) {
       return (
         <View style={{flexDirection: 'row', gap: 8, width: "90%", height: 50, justifyContent: 'center', alignItems: 'center'}}>
           <ArrowUpRight style={{color: 'green', }}/>
@@ -66,7 +77,6 @@ const IncomeScren = () => {
         </View>
       )
     }
-    // const newData = data.toFixed(2)
     return (
       <View style={{flexDirection: 'row', gap: 8, width: "90%", height: 50, justifyContent: 'center', alignItems: 'center'}}>
         <ArrowDownRight style={{color: 'red', }}/>
@@ -92,9 +102,7 @@ const IncomeScren = () => {
   }
 
   const renderIncome = () => {
-    // if (loading) {
-    //   return <Text>Loading...</Text>;
-    // }
+    
     if(transactions.length === 0) {
       return <Text>No transactions found yet!</Text>
     }
@@ -137,7 +145,9 @@ const IncomeScren = () => {
   }
 
   const renderMyGoal = (data) => {
-    console.log("data", data);
+    if(data.length === 0) {
+      return <Text>No goals found yet!</Text>
+    }
     return(
       <View>
         {data.map((item, index) => (
@@ -158,8 +168,7 @@ const IncomeScren = () => {
     )
   }
 
-  const [addAmount, setAddAmount] = React.useState(0);
-  const [addVisible, setAddVisible] = React.useState(false);
+  
 
   const renderAllMyGoal = (item) => {
     // console.log("item", item);
@@ -190,6 +199,40 @@ const IncomeScren = () => {
       </View>
     )
   }
+  
+  const renderAllIncome = ({item}) => {
+    return(
+      <View key={item.id} style={{ paddingBottom: 6 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ height: 6, width: 6, backgroundColor: COLORS.primary, borderRadius: 15, marginRight: 8 }}></View>
+          <Text>{item.income_type.name || 'Unknown'}</Text>
+        </View>
+        <Text style={{ color: COLORS.primary}}>{item.amount} {selectedAccount.currency.name.split(" ")[1]}</Text>
+      </View>
+      <View style={{ paddingLeft: 12, flexDirection: 'row', justifyContent: 'space-between'  }}>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontSize: 10, width: 150 }}>Note: {item.note}</Text>
+        <Text style={{fontSize: 10}}>{item.date.split("T")[0].split("-").join(". ")}</Text>
+      </View>
+    </View>
+    )
+  }
+
+  const renderThreePlannedIncome = () => {
+    if(plannedTransactions.length === 0 || !plannedTransactions) {
+      return (<Text>No planned transactions found yet!</Text>)
+    }
+
+    return (
+      <FlatList
+        data={plannedTransactions}
+        renderItem={renderPlannedIncome}
+        keyExtractor={(item) => item.id}
+      >
+      </FlatList>
+    )
+  }
+
 
 
   return (
@@ -219,30 +262,84 @@ const IncomeScren = () => {
           {renderIncomeChart()}
         </View>
         <View style={{borderTopWidth: 1, width: '80%'}}></View>
-        <View style={{paddingVertical: 12, paddingHorizontal: 18}}>
-          <View style={{flexDirection: 'row', width: 280}}>
+        <View style={{paddingVertical: 12, paddingHorizontal: 18,width: '100%', height: 190}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{fontSize: 28}}>Earnings</Text>
-            <View style={{justifyContent: 'center', alignItems: 'flex-end', left: 100}}>
+            <View style={{justifyContent: 'center', alignItems: 'flex-end'}}>
               <Pressable 
-                onPress
+                onPress={() => {setVisibleAllIncome(true)}}
                 style={styles.buttonStyle}>
                 <Text>More...</Text>
               </Pressable>
             </View>
           </View>
-          
           {renderIncome()}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={visibleAllIncome}
+            onRequestClose={() => {
+              setVisibleAllIncome(!visibleAllIncome);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+              <Pressable onPress={() => setVisibleAllIncome(false)} style={{position: 'absolute', top: 5, right: 5, padding: 12}}>
+                <Text>Close</Text>
+              </Pressable>
+              <View style={{paddingBottom: 12}}>
+                <Text style={{fontSize: 22}}>All transactions</Text>
+              </View>
+              <View style={{width: '80%', height: 400}}>
+              <FlatList
+                data={transactions}
+                renderItem={renderAllIncome}
+                keyExtractor={(item) => item.id}
+              >
+                </FlatList>
+              </View>
+              </View>
+            </View>
+
+
+          </Modal>
         </View>
         <View style={{borderTopWidth: 1, width: '80%'}}></View>
-        <View style={{paddingVertical: 12, paddingHorizontal: 18, width: '100%'}}>
-          <Text style={{fontSize: 24,}}>Planned income</Text>
-            <FlatList
-              data={plannedTransactions.slice(0, 3)}
-              renderItem={renderPlannedIncome}
-              keyExtractor={(item) => item.id}
+        <View style={{paddingVertical: 12, paddingHorizontal: 18, width: '100%', height: 195}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text style={{fontSize: 24,}}>Planned income</Text>
+            <View style={{justifyContent: 'center', alignItems: 'flex-end', }}>
+              <Pressable 
+                onPress={() => {setVisibleAllPlannedIncome(true)}}
+                style={styles.buttonStyle}>
+                <Text>More...</Text>
+              </Pressable>
+            </View>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={visibleAllPlannedIncome}
+              onRequestClose={() => {
+                setVisibleAllPlannedIncome(!visibleAllPlannedIncome);
+              }}
             >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                <Pressable onPress={() => setVisibleAllPlannedIncome(false)} style={{position: 'absolute', top: 5, right: 5, padding: 12}}>
+                  <Text>Close</Text>
+                </Pressable>
+                <View style={{paddingBottom: 12}}>
+                  <Text style={{fontSize: 22}}>All planned transactions</Text>
+                </View>
+                <View style={{width: '80%', height: 400}}>
+                {renderThreePlannedIncome()}
+                </View>
+                </View>
+              </View>
 
-            </FlatList>
+            </Modal>
+          </View>
+            {renderThreePlannedIncome()}
         </View>
         <View style={{borderTopWidth: 1, width: '80%'}}></View>
         <View style={{ paddingVertical: 12, width: '100%', paddingHorizontal: 18}}>

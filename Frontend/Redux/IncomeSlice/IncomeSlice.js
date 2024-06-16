@@ -1,8 +1,4 @@
-import {
-  buildCreateSlice,
-  createAsyncThunk,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import RepositoryService from "../../Services/RepositoryService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -63,14 +59,14 @@ export const compareToLastMonth = createAsyncThunk(
 export const createGoal = createAsyncThunk(
   "income/createGoal",
   async (data) => {
-    console.log("data", data);
+    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response = await repositoryService.incomeRepository.createMyGoal(
       data,
       token
     );
-    console.log("response", response);
+    // console.log("response", response);
     return response;
   }
 );
@@ -88,7 +84,7 @@ export const getGoals = createAsyncThunk("income/getGoals", async (data) => {
 export const addMoneyToGoals = createAsyncThunk(
   "income/addMoneyToGoals",
   async (data) => {
-    console.log("data", data);
+    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response = await repositoryService.incomeRepository.addMoneyToGoal(
@@ -109,16 +105,36 @@ export const incomeSlice = createSlice({
       const now = new Date();
       const newTransaction = {
         ...action.payload,
-        date: new Date(action.payload.newDate).toISOString(), // Visszaalakítás Date objektummá
+        date: new Date(action.payload.newDate).toISOString(),
       };
       const currentDate = new Date();
       const transactionDate = new Date(newTransaction.date);
+      const firstDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+      const lastDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
 
-      if (transactionDate <= currentDate) {
+      if (
+        transactionDate <= currentDate &&
+        transactionDate >= firstDayOfMonth
+      ) {
         state.transactions = [newTransaction, ...state.transactions];
+        // console.log("state.totalAmount add elott", state.totalAmount);
         state.totalAmount =
           parseInt(state.totalAmount) + parseInt(newTransaction.amount);
-      } else {
+        // console.log("state.totalAmount add utan", state.totalAmount);
+      }
+      if (transactionDate >= currentDate && transactionDate <= lastDayOfMonth) {
         const newTransactionDaysRemaining = Math.ceil(
           (new Date(newTransaction.date) - now) / (1000 * 60 * 60 * 24)
         );

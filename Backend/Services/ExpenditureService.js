@@ -47,7 +47,6 @@ async function getMyExpenditureFromCurrentMonth(accountId) {
 
 async function compareToLastMonth(accountId) {
   try {
-    // console.log("Account ID", accountId);
     const now = new Date();
     const startMonth = now.getMonth() + 1;
 
@@ -61,7 +60,6 @@ async function compareToLastMonth(accountId) {
       59,
       999
     );
-    // console.log("Current Start", currentStart);
 
     const lastMonthStart = new Date(now.getFullYear(), startMonth - 2, 1);
     const lastMonthEnd = new Date(
@@ -73,8 +71,6 @@ async function compareToLastMonth(accountId) {
       59,
       999
     );
-
-    // console.log("Last Month Start", lastMonthStart);
 
     const currentMonthTransactions = await prisma.income.findMany({
       where: {
@@ -89,8 +85,6 @@ async function compareToLastMonth(accountId) {
       },
     });
 
-    // console.log("Current Month Transactions", currentMonthTransactions);
-
     const lastMonthTransactions = await prisma.income.findMany({
       where: {
         account_id: accountId,
@@ -104,8 +98,6 @@ async function compareToLastMonth(accountId) {
       },
     });
 
-    // console.log("Last Month Transactions", lastMonthTransactions);
-
     let currentMonthTotal = 0;
     currentMonthTransactions.forEach((transaction) => {
       currentMonthTotal += transaction.amount;
@@ -116,27 +108,24 @@ async function compareToLastMonth(accountId) {
       lastMonthTotal += transaction.amount;
     });
 
-    // console.log("Current Month Total", currentMonthTotal);
-    // console.log("Last Month Total", lastMonthTotal);
-
     if (currentMonthTotal === 0 || lastMonthTotal === 0) {
       return 0;
     }
 
     const percentage =
       ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
-    // console.log("Percentage", percentage);
     return percentage;
   } catch (error) {
-    return "Internal server error";
+    return { error: error.message };
   }
 }
 
 async function getMyPlannedExpenditures(accountId) {
   try {
+    // console.log("Account Id", accountId);
     const now = new Date();
     const startMonth = now.getMonth() + 1;
-    const endDate = new Date(now.getFullYear(), startMonth + 1, 1);
+    const endDate = new Date(now.getFullYear(), startMonth, 1);
     // console.log("Now", now);
     // console.log("End Date", endDate);
     // console.log("Start Month", startMonth);
@@ -157,17 +146,71 @@ async function getMyPlannedExpenditures(accountId) {
         amount: true,
         date: true,
         note: true,
-        expenditure_type: {
+        income_type: {
           select: {
             name: true,
           },
         },
       },
+      orderBy: {
+        date: "desc",
+      },
     });
-    console.log("Planned Expenditures", plannedExpenditures);
-    return plannedExpenditures;
+
+    const transactionsWithDaysRemaining = plannedExpenditures.map(
+      (transaction) => {
+        const transactionDate = new Date(transaction.date);
+        const daysRemaining = Math.ceil(
+          (transactionDate - now) / (1000 * 60 * 60 * 24)
+        );
+        return {
+          ...transaction,
+          daysRemaining,
+        };
+      }
+    );
+
+    // console.log("Planned Expenditures", plannedExpenditures);
+    return { values: transactionsWithDaysRemaining };
   } catch (error) {
-    return "Internal server error";
+    return { error: error.message };
+  }
+}
+
+async function createMyBudget(body) {
+  try {
+    console.log("Body", body);
+    const newBudget = await prisma.expenditure_plan.create({
+      data: {
+        id: body.id,
+        amount: parseFloat(body.budgetAmount),
+        account: {
+          connect: { id: body.accountId },
+        },
+      },
+    });
+    console.log("New newBudget", newBudget);
+    return { values: newBudget };
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+async function getMyBudget(accountId) {
+  try {
+    const budget = await prisma.expenditure_plan.findMany({
+      where: {
+        account_id: accountId,
+      },
+      select: {
+        id: true,
+        amount: true,
+      },
+    });
+    // console.log("Budget", budget);
+    return { values: budget };
+  } catch (error) {
+    return { error: error.message };
   }
 }
 
@@ -175,4 +218,6 @@ module.exports = {
   getMyExpenditureFromCurrentMonth,
   compareToLastMonth,
   getMyPlannedExpenditures,
+  createMyBudget,
+  getMyBudget,
 };

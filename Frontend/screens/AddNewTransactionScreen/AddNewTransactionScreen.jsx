@@ -46,12 +46,12 @@ const AddNewTransactionScreen = () => {
     }
 
     const renderTypeButton = ({item}) => {
-        
+        // console.log('Item:', item)
         return (
             <Pressable onPress={() => setSelectedTransactionType(item)}
             style={({ pressed }) => [
                 {
-                    backgroundColor: selectedTransactionType === item.id ? 'lightgrey' : (pressed ? 'grey' : 'white'),
+                    backgroundColor: selectedTransactionType?.id === item.id ? 'lightgrey' : (pressed ? 'grey' : 'white'),
                 },
                 styles.transactionTypeButton,
                 ]}
@@ -70,6 +70,7 @@ const AddNewTransactionScreen = () => {
         if(transactionTypes.length === 0) {
             return <Text>No transaction types found.</Text>
         }
+        // console.log('Transaction Types:', transactionTypes)
         return (
                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8, paddingTop: 6}}>
                    {transactionTypes.map(item => (

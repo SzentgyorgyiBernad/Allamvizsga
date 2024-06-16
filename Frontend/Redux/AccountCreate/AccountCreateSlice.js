@@ -30,11 +30,12 @@ export const createDefaultAccount = createAsyncThunk(
     // console.log("createDefaultAccount", data);
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
+    console.log("repositoryService", data);
     const response =
-      await repositoryService.accountCreateRepository.createDefaultAccount({
+      await repositoryService.accountCreateRepository.createDefaultAccount(
         data,
-        token,
-      });
+        token
+      );
     if (response.error) {
       return rejectWithValue({ error: response.error });
     } else {

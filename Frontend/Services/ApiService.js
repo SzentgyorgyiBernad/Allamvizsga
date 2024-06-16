@@ -18,8 +18,8 @@ export default class ApiService {
   async fetchData(endPoint, method, options) {
     // console.log("Api fetch:", this.baseUrl, endPoint, method, options);
     // console.log("Api fetch:", options, method, endPoint);
-    console.log("Api fetch:", options, endPoint);
-    console.log("Api fetch:", JSON.stringify(options?.body));
+    // console.log("Api fetch:", options, endPoint);
+    // console.log("Api fetch:", JSON.stringify(options?.body));
     try {
       const response = await fetch(`${this.baseUrl}/${endPoint}`, {
         method,

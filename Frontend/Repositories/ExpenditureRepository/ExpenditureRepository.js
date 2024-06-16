@@ -28,4 +28,9 @@ export default class ExpenditureRepository extends BaseRepository {
     );
     return response;
   }
+
+  async createMyBudget(body, token) {
+    response = await this.api.post("expenditure/createBudget", { body, token });
+    return response;
+  }
 }

@@ -7,6 +7,7 @@ import {
 } from "../../Redux/Transactions/TransactionSlice";
 import uuid from "react-native-uuid";
 import { addIncome } from "../../Redux/IncomeSlice/IncomeSlice";
+import { addExpenditure } from "../../Redux/Expenditure/ExpenditureSlice";
 
 export const useAddNewTransactionScreenLogic = () => {
   const [selectedTransaction, setSelectedTransaction] = React.useState(null);
@@ -57,7 +58,7 @@ export const useAddNewTransactionScreenLogic = () => {
         newDate,
         selectedAccount: selectedAccount.id,
       };
-      dispatch(addIncome(newTransaction));
+      dispatch(addExpenditure(newTransaction));
       console.log(newTransaction);
     } else {
       dispatch(

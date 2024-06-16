@@ -1,10 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/Auth/AuthSlice";
+import React from "react";
 import {
   getExpendituresFromCurrentMonth,
   getPlannedExpenditures,
   compareToLastMonth,
+  createBudget,
 } from "../../Redux/Expenditure/ExpenditureSlice";
+import uuid from "react-native-uuid";
 
 export const useExpenditureScreenLogic = () => {
   const dispatch = useDispatch();
@@ -20,6 +23,7 @@ export const useExpenditureScreenLogic = () => {
     totalAmount,
     budget,
   } = expenditureState;
+  const [budgetAmount, setBudgetAmount] = React.useState(0);
 
   const onLogout = () => {
     dispatch(logout());
@@ -37,6 +41,16 @@ export const useExpenditureScreenLogic = () => {
     dispatch(compareToLastMonth(selectedAccount.id));
   };
 
+  const setBudget = () => {
+    dispatch(
+      createBudget({
+        id: uuid.v4(),
+        accountId: selectedAccount.id,
+        budgetAmount,
+      })
+    );
+  };
+
   return {
     expenditures,
     plannedExpenditures,
@@ -50,5 +64,8 @@ export const useExpenditureScreenLogic = () => {
     getExpenditures,
     getMyPlannedExpenditures,
     getCompareToLastMonth,
+    budgetAmount,
+    setBudgetAmount,
+    setBudget,
   };
 };
