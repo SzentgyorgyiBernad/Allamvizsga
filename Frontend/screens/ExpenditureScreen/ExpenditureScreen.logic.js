@@ -6,6 +6,7 @@ import {
   getPlannedExpenditures,
   compareToLastMonth,
   createBudget,
+  getMyBudget,
 } from "../../Redux/Expenditure/ExpenditureSlice";
 import uuid from "react-native-uuid";
 
@@ -51,6 +52,10 @@ export const useExpenditureScreenLogic = () => {
     );
   };
 
+  const getBudget = () => {
+    dispatch(getMyBudget(selectedAccount.id));
+  };
+
   return {
     expenditures,
     plannedExpenditures,
@@ -67,5 +72,6 @@ export const useExpenditureScreenLogic = () => {
     budgetAmount,
     setBudgetAmount,
     setBudget,
+    getBudget,
   };
 };

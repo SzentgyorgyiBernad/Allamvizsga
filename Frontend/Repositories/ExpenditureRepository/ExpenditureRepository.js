@@ -10,7 +10,6 @@ export default class ExpenditureRepository extends BaseRepository {
   }
 
   async getMyExpendituresFromCurrentMonth(body, token) {
-    // console.log("getMyExpendituresFromCurrentMonth", body);
     response = await this.api.get(
       "expenditure/getMyExpendituresFromCurrentMonth/" + body,
       { body, token }
@@ -31,6 +30,14 @@ export default class ExpenditureRepository extends BaseRepository {
 
   async createMyBudget(body, token) {
     response = await this.api.post("expenditure/createBudget", { body, token });
+    return response;
+  }
+
+  async getBudget(body, token) {
+    response = await this.api.get("expenditure/getMyBudget/" + body, {
+      body,
+      token,
+    });
     return response;
   }
 }

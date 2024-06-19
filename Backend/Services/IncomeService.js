@@ -75,7 +75,6 @@ async function compareToLastMonth(accountId) {
       59,
       999
     );
-    // console.log(currentStart, currentEnd, previousMonthStart, previousMonthEnd);
 
     const transactionsFromCurrentMonth = await prisma.income.findMany({
       where: {
@@ -112,7 +111,6 @@ async function compareToLastMonth(accountId) {
     transactionsFromLastmMonth.forEach((transaction) => {
       totalIncomeFromLastMonth += transaction.amount;
     });
-    // console.log(totalIncomeFromCurrentMonth, totalIncomeFromLastMonth);
 
     const percentage =
       ((totalIncomeFromCurrentMonth - totalIncomeFromLastMonth) /
@@ -169,8 +167,6 @@ async function getMyPlannedTransactions(accountId) {
       };
     });
 
-    // console.log("transactions", transactionsWithDaysRemaining);
-
     return { values: transactionsWithDaysRemaining };
   } catch (error) {
     return "Internal server error";
@@ -179,7 +175,6 @@ async function getMyPlannedTransactions(accountId) {
 
 async function createMyGoal(data) {
   try {
-    // console.log("data", data);
     const response = await prisma.user_goal.create({
       data: {
         id: data.id,
@@ -195,7 +190,6 @@ async function createMyGoal(data) {
         },
       },
     });
-    // console.log("response", response);
 
     return { values: response };
   } catch (error) {
@@ -230,7 +224,6 @@ async function getMyGoals(accountId) {
 
 async function addMoneyToGoals(data) {
   try {
-    // console.log("data", data);
     const goal = await prisma.user_goal.findUnique({
       where: {
         id: data.id,

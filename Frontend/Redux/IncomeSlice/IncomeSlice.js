@@ -16,7 +16,6 @@ const initialState = {
 export const getTransactionsFromCurrentMonth = createAsyncThunk(
   "income/getTransactionsFromSpecDate",
   async (data) => {
-    // console.log("getTransactionsFromCurrentMonth", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response =
@@ -59,14 +58,12 @@ export const compareToLastMonth = createAsyncThunk(
 export const createGoal = createAsyncThunk(
   "income/createGoal",
   async (data) => {
-    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response = await repositoryService.incomeRepository.createMyGoal(
       data,
       token
     );
-    // console.log("response", response);
     return response;
   }
 );
@@ -84,7 +81,6 @@ export const getGoals = createAsyncThunk("income/getGoals", async (data) => {
 export const addMoneyToGoals = createAsyncThunk(
   "income/addMoneyToGoals",
   async (data) => {
-    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response = await repositoryService.incomeRepository.addMoneyToGoal(
@@ -100,8 +96,6 @@ export const incomeSlice = createSlice({
   initialState,
   reducers: {
     addIncome: (state, action) => {
-      // console.log("all", state.transactions);
-      // console.log("addIncome", action.payload);
       const now = new Date();
       const newTransaction = {
         ...action.payload,
@@ -129,10 +123,8 @@ export const incomeSlice = createSlice({
         transactionDate >= firstDayOfMonth
       ) {
         state.transactions = [newTransaction, ...state.transactions];
-        // console.log("state.totalAmount add elott", state.totalAmount);
         state.totalAmount =
           parseInt(state.totalAmount) + parseInt(newTransaction.amount);
-        // console.log("state.totalAmount add utan", state.totalAmount);
       }
       if (transactionDate >= currentDate && transactionDate <= lastDayOfMonth) {
         const newTransactionDaysRemaining = Math.ceil(
@@ -146,12 +138,6 @@ export const incomeSlice = createSlice({
       }
     },
     addMoneyToGoal: (state, action) => {
-      console.log(
-        "addMoneyToGoal",
-        action.payload.amount,
-        "es",
-        action.payload.goalId
-      );
       const goal = state.goals.find(
         (goal) => goal.id === action.payload.goalId
       );
@@ -166,7 +152,6 @@ export const incomeSlice = createSlice({
       getTransactionsFromCurrentMonth.fulfilled,
       (state, action) => {
         state.loading = false;
-        // console.log("action.payload", action.payload.values);
         state.transactions = action.payload.values.transactions;
         state.totalAmount = action.payload.values.totalIncome;
       }
@@ -180,7 +165,6 @@ export const incomeSlice = createSlice({
     });
     builder.addCase(getPlannedTransactions.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("action.payload planned income", action.payload);
       state.plannedTransactions = action.payload.values.values;
     });
     builder.addCase(getPlannedTransactions.rejected, (state) => {
@@ -192,7 +176,6 @@ export const incomeSlice = createSlice({
     });
     builder.addCase(compareToLastMonth.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("action.payload comparte", action.payload);
       state.compareToLastMonthPercentage = action.payload.values;
     });
     builder.addCase(compareToLastMonth.rejected, (state) => {
@@ -205,7 +188,6 @@ export const incomeSlice = createSlice({
     builder.addCase(createGoal.fulfilled, (state, action) => {
       state.loading = false;
       state.goals.push(action.payload.values.values);
-      console.log("state.goals", state.goals);
     });
     builder.addCase(createGoal.rejected, (state, action) => {
       state.loading = false;
@@ -216,7 +198,6 @@ export const incomeSlice = createSlice({
     });
     builder.addCase(getGoals.fulfilled, (state, action) => {
       state.loading = false;
-      console.log("action.payload", action.payload.values.values);
       state.goals = action.payload.values.values;
     });
     builder.addCase(getGoals.rejected, (state, action) => {
@@ -228,7 +209,6 @@ export const incomeSlice = createSlice({
     });
     builder.addCase(addMoneyToGoals.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("action.payload", action.payload);
     });
     builder.addCase(addMoneyToGoals.rejected, (state, action) => {
       state.loading = false;

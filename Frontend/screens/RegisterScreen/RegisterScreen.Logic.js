@@ -40,13 +40,6 @@ export const useRegisterScreenLogic = () => {
       return;
     } else handleError("password", "");
 
-    // if (myError) {
-    //   handleError("email", myError);
-    //   // console.log("logic", myError);
-    //   return;
-    // }
-
-    // console.log("Logic register");
     dispatch(
       register({
         email,

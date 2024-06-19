@@ -8,7 +8,6 @@ async function userExists(email) {
     },
   });
 
-  console.log("amit kap", userExist);
   if (userExist == null) return false;
   else return true;
 }
@@ -19,7 +18,6 @@ async function getUser(email) {
       email: email,
     },
   });
-  console.log("userFromDb", userFromDb);
   return { user: userFromDb };
 }
 

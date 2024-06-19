@@ -15,6 +15,7 @@ import {
   getAllCurrencyFromDB,
   createDefaultAccount,
 } from "../../Redux/AccountCreate/AccountCreateSlice";
+import { deleteAccount } from "../../Redux/AccountSlice/AccountSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
 
@@ -33,9 +34,7 @@ export const useMenuScreenLogic = () => {
   const [name, setName] = React.useState("");
 
   const getAccounts = () => {
-    // console.log("getAccounts in logic");
     dispatch(getAllAccounts());
-    // console.log("accounts", accounts[0]?.currency.name);
   };
 
   const onLogout = () => {
@@ -43,7 +42,6 @@ export const useMenuScreenLogic = () => {
   };
 
   const getAllCurrency = () => {
-    // console.log("get all currency");
     dispatch(getAllCurrencyFromDB());
   };
 
@@ -57,7 +55,6 @@ export const useMenuScreenLogic = () => {
 
   const getLastThreeTransactions = () => {
     dispatch(getLastThreeTransaction(selectedAccount.id));
-    // console.log("asd", transactionsByMonths);
   };
 
   const handleAccountCreate = async () => {
@@ -72,7 +69,6 @@ export const useMenuScreenLogic = () => {
         email,
       })
     );
-    console.log("create account", selectedCurrency, amount, name);
     const account = {
       id,
       currency: { name: selectedCurrency },
@@ -80,12 +76,10 @@ export const useMenuScreenLogic = () => {
       name: name,
     };
     dispatch(addToAccounts(account));
-    // console.log(AsyncStorage.getItem("email"));
-    // console.log("create account", selectedCurrency, amount, name);
   };
 
   const onDeleteAccount = () => {
-    console.log("delete account");
+    dispatch(deleteAccount(selectedAccount.id));
   };
 
   return {
@@ -111,5 +105,6 @@ export const useMenuScreenLogic = () => {
     setAmount,
     name,
     setName,
+    onDeleteAccount,
   };
 };

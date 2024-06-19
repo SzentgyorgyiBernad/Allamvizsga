@@ -8,17 +8,22 @@ const initialState = {
   error: undefined,
   transactionsByMonths: [],
   transactions: [],
+  allTransaction: [],
+  incomeType: [],
+  outcomeType: [],
+  incomeNumber: 0,
+  expenditureNumber: 0,
+  incomeAmount: 0,
+  expenditureAmount: 0,
 };
 
 export const getAllTransactionTypes = createAsyncThunk(
   "transaction/allTransactionTypes",
   async () => {
-    // console.log("get all transaction types from db");
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.transactionRepository.getAllTransaction(token);
-    // console.log("response from fetch", response);
     return response;
   }
 );
@@ -27,14 +32,12 @@ export const getIncomeByMonths = createAsyncThunk(
   "transaction/getIncomeByMonths",
   async (data) => {
     const token = await AsyncStorage.getItem("token");
-    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.transactionRepository.getIncomeByMonths(
         data,
         token
       );
-    // console.log("response from fetch", response);
     return response;
   }
 );
@@ -44,13 +47,11 @@ export const getLastThreeTransaction = createAsyncThunk(
   async (data) => {
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
-    // console.log("data", data);
     const response =
       await repositoryService.transactionRepository.getLastThreeTransactions(
         data,
         token
       );
-    // console.log("response from fetch", response);
     return response;
   }
 );
@@ -58,17 +59,27 @@ export const getLastThreeTransaction = createAsyncThunk(
 export const createNewTransaction = createAsyncThunk(
   "transaction/createNewTransaction",
   async (data) => {
-    // console.log("create new transaction in db", transaction);
-    // console.log("Account", )
     const token = await AsyncStorage.getItem("token");
-    // console.log("token", token);
     const repositoryService = new RepositoryService();
     const response =
       await repositoryService.transactionRepository.createTransaction(
         data,
         token
       );
-    // console.log("response from fetch", response);
+    return response;
+  }
+);
+
+export const getAllTransactionWithDate = createAsyncThunk(
+  "transaction/getAllTransactionWithDate",
+  async (data) => {
+    const token = await AsyncStorage.getItem("token");
+    const repositoryService = new RepositoryService();
+    const response =
+      await repositoryService.transactionRepository.getAllMyTransactionWithDate(
+        data,
+        token
+      );
     return response;
   }
 );
@@ -83,7 +94,6 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(getAllTransactionTypes.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("builder", action.payload);
       state.transactionTypes = action.payload.values;
     });
     builder.addCase(getAllTransactionTypes.rejected, (state) => {
@@ -98,9 +108,7 @@ export const transactionSlice = createSlice({
       if (state.transactions.values.length > 3) {
         state.transactions.values.pop();
       }
-      // console.log("builder", action.payload.values.value);
       state.transactions.values.unshift(action.payload.values.value);
-      // console.log("builder", action.payload);
     });
     builder.addCase(createNewTransaction.rejected, (state) => {
       state.loading = false;
@@ -111,7 +119,6 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(getIncomeByMonths.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("builder by month", action.payload.values);
       state.transactionsByMonths = action.payload.values;
     });
     builder.addCase(getIncomeByMonths.rejected, (state) => {
@@ -123,12 +130,33 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(getLastThreeTransaction.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("builder", action.payload.values);
       state.transactions = action.payload.values;
     });
     builder.addCase(getLastThreeTransaction.rejected, (state) => {
       state.loading = false;
-      // console.log("builder", action.payload.error);
+      state.error = action.payload.error;
+    });
+    builder.addCase(getAllTransactionWithDate.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getAllTransactionWithDate.fulfilled, (state, action) => {
+      state.loading = false;
+      // console.log("action.payload", action.payload.values);
+      // console.log("action.payload", action.payload.values.income);
+      state.allTransaction = action.payload.values.transactionValues;
+      // console.log("allTransaction", state.allTransaction);
+      state.incomeType = action.payload.values.incomeTypeValues;
+      // console.log("incomeType", state.incomeType);
+      state.outcomeType = action.payload.values.outcomeTypeValues;
+      // console.log("outcomeType", state.outcomeType);
+      state.incomeNumber = action.payload.values.income;
+      // console.log("incomeNumber", state.incomeNumber);
+      state.expenditureNumber = action.payload.values.outcome;
+      state.incomeAmount = action.payload.values.incomeAmount;
+      state.expenditureAmount = action.payload.values.outcomeAmount;
+    });
+    builder.addCase(getAllTransactionWithDate.rejected, (state) => {
+      state.loading = false;
       state.error = action.payload.error;
     });
   },

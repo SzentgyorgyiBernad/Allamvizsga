@@ -10,7 +10,6 @@ export default class IncomeRepository extends BaseRepository {
   }
 
   async getMyTransactionsFromCurrentMonth(body, token) {
-    // console.log("getMyTransactionsFromCurrentMonth", body);
     response = await this.api.get(
       "income/getMyTransactionsFromCurrentMonth/" + body,
       { body, token }
@@ -37,7 +36,6 @@ export default class IncomeRepository extends BaseRepository {
   }
 
   async addMoneyToGoal(body, token) {
-    console.log("body", body, "token", token);
     response = await this.api.post("income/addMoneyToGoal", { body, token });
     return response;
   }

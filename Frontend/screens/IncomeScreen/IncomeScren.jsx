@@ -107,7 +107,6 @@ const IncomeScren = () => {
       return <Text>No transactions found yet!</Text>
     }
     const firstThreeTransactions = transactions.slice(0, 3);
-    // console.log("firstThreeTransactions", firstThreeTransactions);
     return firstThreeTransactions.map((item, index) => (
       <View key={index} style={{ paddingBottom: 6 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -126,7 +125,6 @@ const IncomeScren = () => {
   }
 
   const renderPlannedIncome = ({item}) => {
-    // console.log("item", item);
     return(
       <View key={item.id} style={{ paddingBottom: 6 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -171,7 +169,6 @@ const IncomeScren = () => {
   
 
   const renderAllMyGoal = (item) => {
-    // console.log("item", item);
     return(
       <View key={item.index} style={{paddingVertical: 12, paddingHorizontal: 12, width: '100%', paddingBottom: 18}}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

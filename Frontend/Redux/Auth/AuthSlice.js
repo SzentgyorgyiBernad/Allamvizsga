@@ -32,15 +32,12 @@ export const login = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     const repositoryService = new RepositoryService();
     const response = await repositoryService.authRepository.login(data);
-    // console.log("rep", response);
     if (response.error) {
-      // console.log(response.error);
       myError = rejectWithValue({ error: response.error });
       return myError;
     } else {
       await AsyncStorage.setItem("token", response.token);
       await AsyncStorage.setItem("email", response.email);
-      console.log("response", response);
       return response;
     }
   }
@@ -49,11 +46,9 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async (data, { rejectWithValue }) => {
-    // console.log("data", data);
     const repositoryService = new RepositoryService();
     const response = await repositoryService.authRepository.register(data);
     if (response.error) {
-      // console.log(response.error);
       return rejectWithValue({ error: response.error });
     } else {
       await AsyncStorage.setItem("token", response.token);
@@ -73,7 +68,6 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    //loginSilently
     builder.addCase(loginSilently.pending, (state) => {
       state.loading = true;
     });
@@ -89,7 +83,6 @@ export const authSlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
-    //login
     builder.addCase(login.pending, (state) => {
       state.login = true;
     });
@@ -103,12 +96,10 @@ export const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload.error;
     });
-    //Register
     builder.addCase(register.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(register.fulfilled, (state, action) => {
-      // console.log("Fullfilled");
       state.loading = false;
       state.token = action.payload.token;
       state.email = action.payload.email;
@@ -117,7 +108,6 @@ export const authSlice = createSlice({
     });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
-      // console.log(action.error.error);
       state.error = action.payload.error;
     });
   },

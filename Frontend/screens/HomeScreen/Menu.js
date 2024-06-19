@@ -44,7 +44,6 @@ const Menu = ({ navigation }) => {
     onDeleteAccount,
   } = useMenuScreenLogic();
   useEffect(() => {
-    // console.log("useEffect getAccounts es getAllCurrency");
     getAccounts();
     getAllCurrency();
   }, []);
@@ -55,15 +54,11 @@ const Menu = ({ navigation }) => {
     }
     if (accounts.length > 0) {
       onSetSelectedAccount(accounts[0]);
-      // console.log("useEffect onSetSelectedAccount az elso", accounts[0]);
     }
   }, [accounts]);
 
   useEffect(() => {
     if (selectedAccount) {
-      // console.log(
-      //   "useEffect getLastSixMonthsIncome es getLastThreeTransactions"
-      // );
       getLastSixMonthsIncome();
       getLastThreeTransactions();
     }
@@ -73,7 +68,6 @@ const Menu = ({ navigation }) => {
 
   const handleScorll = (event) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
-    // console.log("Amit beallit: ", accounts[index]);
     onSetSelectedAccount(accounts[index]);
   };
 
@@ -92,15 +86,6 @@ const Menu = ({ navigation }) => {
     ];
   };
 
-  const customFormatter = (value) => {
-    if (value === 0) return "0";
-    if (value === 2500) return "2.5k";
-    if (value === 5000) return "5k";
-    if (value === 7500) return "7.5k";
-    if (value === 10000) return "10k";
-    return value;
-  };
-
   const renderChart = () => {
     if (!transactionsByMonths) {
       return null;
@@ -114,11 +99,17 @@ const Menu = ({ navigation }) => {
     const negatives = months.map((month) => ({
       y: transactionsByMonths.values[month].negatives,
     }));
+
     let barData = [];
     positives.forEach((item, index) => {
       const row = createRow(item.y, -negatives[index].y, months[index]);
       barData = barData.concat(row);
     });
+
+    const maxPositive = Math.max(...positives.map((item) => item.y));
+    const maxNegative = Math.min(...negatives.map((item) => item.y));
+
+    const maxValue = Math.max(maxPositive, -maxNegative);
 
     return (
       <View style={{ paddingTop: 12, paddingHorizontal: 4 }}>
@@ -133,9 +124,8 @@ const Menu = ({ navigation }) => {
           yAxisThickness={0}
           yAxisTextStyle={{ color: "gray" }}
           noOfSections={4}
-          maxValue={10000}
-          xAxisLabelRotation={90}
-          yAxisLabelContainerStyle={customFormatter}
+          maxValue={maxValue + 500}
+          isAnimated
         />
       </View>
     );
@@ -146,15 +136,6 @@ const Menu = ({ navigation }) => {
       return <Text>Loading...</Text>;
     }
 
-    // if (error) {
-    //   return <Text>Error loading currencies.</Text>;
-    // }
-    // console.log("currencies", currencies);
-
-    // if (currencies.length === 0) {
-    //   return <Text>No currencies found.</Text>;
-    // }
-    // console.log("currencies", currencies);
     return (
       <MyDropDown
         items={currencies}
@@ -207,14 +188,14 @@ const Menu = ({ navigation }) => {
             setVisible(true);
           }}
           style={{
-            backgroundColor: COLORS.grey,
+            backgroundColor: "lightgrey",
             paddingVertical: 2,
             paddingHorizontal: 6,
             borderRadius: 5,
             marginLeft: 16,
           }}
         >
-          <Text style={{ color: COLORS.white }}>New account</Text>
+          <Text style={{ color: COLORS.black }}>New account</Text>
         </Pressable>
         <View style={styles.chart}>{renderChart()}</View>
         <View
@@ -245,6 +226,18 @@ const Menu = ({ navigation }) => {
               }}
             ></View>
             <Text>Income</Text>
+            <Pressable
+              onPress={() => onDeleteAccount(item.id)}
+              style={{
+                backgroundColor: "lightgrey",
+                paddingVertical: 2,
+                paddingHorizontal: 16,
+                borderRadius: 5,
+                marginLeft: 16,
+              }}
+            >
+              <Text>Delete</Text>
+            </Pressable>
           </View>
         </View>
 
@@ -330,7 +323,6 @@ const Menu = ({ navigation }) => {
   };
 
   const renderLastThreeTransaction = (item) => {
-    // console.log("item", item.item);
     const textColor = item.item.amount > 0 ? COLORS.primary : COLORS.red;
     const amountText =
       item.item.amount > 0 ? `+${item.item.amount}` : item.item.amount;
@@ -365,7 +357,6 @@ const Menu = ({ navigation }) => {
   };
 
   const renderFlatListWithLastThreeTransactions = () => {
-    // console.log("transactions", transactions);
     if (transactions.values.length === 0) {
       return (
         <View>
@@ -383,7 +374,6 @@ const Menu = ({ navigation }) => {
   };
 
   const renderAccounts = () => {
-    // console.log("accounts", accounts);
     if (!accounts) {
       return <Text>Loading...</Text>;
     }
@@ -430,9 +420,33 @@ const Menu = ({ navigation }) => {
       <View style={styles.accountCard}>{renderAccounts()}</View>
 
       <View style={styles.bottomCard}>
-        <Text style={{ fontSize: 22, paddingBottom: 8 }}>
-          Recent transactions
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 22, paddingBottom: 8 }}>
+            Recent transactions
+          </Text>
+          <View>
+            <Pressable
+              onPress={() => {
+                navigation.navigate("AllTransactionsScreen");
+              }}
+              style={{
+                backgroundColor: "lightgrey",
+                paddingVertical: 2,
+                paddingHorizontal: 24,
+                borderRadius: 5,
+              }}
+            >
+              <Text style={{ color: COLORS.black }}>All </Text>
+            </Pressable>
+          </View>
+        </View>
+
         {renderFlatListWithLastThreeTransactions()}
       </View>
     </LinearGradient>
@@ -492,7 +506,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightGray,
     borderRadius: 20,
     marginTop: 20,
-    borderWidth: 1,
+    // borderWidth: 1,
   },
   centeredView: {
     flex: 1,

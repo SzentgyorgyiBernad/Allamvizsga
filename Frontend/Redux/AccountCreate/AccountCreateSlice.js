@@ -12,14 +12,10 @@ const initialState = {
 export const getAllCurrencyFromDB = createAsyncThunk(
   "currency/allCurrency",
   async () => {
-    // console.log("get all currency from db");
     const repositoryService = new RepositoryService();
-    // console.log("repositoryService");
     const token = await AsyncStorage.getItem("token");
-    // console.log("token", token);
     const response =
       await repositoryService.accountCreateRepository.getAllCurrency(token);
-    // console.log("response from fetch", response);
     return response;
   }
 );
@@ -27,10 +23,8 @@ export const getAllCurrencyFromDB = createAsyncThunk(
 export const createDefaultAccount = createAsyncThunk(
   "account/createDefaultAccount",
   async (data, { rejectWithValue }) => {
-    // console.log("createDefaultAccount", data);
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
-    console.log("repositoryService", data);
     const response =
       await repositoryService.accountCreateRepository.createDefaultAccount(
         data,
@@ -54,9 +48,7 @@ export const accountCreateSlice = createSlice({
     });
     builder.addCase(getAllCurrencyFromDB.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("builder currencies", action.payload);
       state.currencies = action.payload.values;
-      // console.log("state.currencies", state.currencies);
     });
     builder.addCase(getAllCurrencyFromDB.rejected, (state) => {
       state.loading = false;
@@ -78,4 +70,3 @@ export const accountCreateSlice = createSlice({
 });
 
 export default accountCreateSlice.reducer;
-// export const accountSelector = (state) => state.accountReducer;

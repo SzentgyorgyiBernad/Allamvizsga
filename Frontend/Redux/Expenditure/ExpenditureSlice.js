@@ -15,7 +15,6 @@ const initialState = {
 export const getExpendituresFromCurrentMonth = createAsyncThunk(
   "expenditure/getExpendituresFromSpecDate",
   async (data) => {
-    // console.log("getExpendituresFromCurrentMonth", data);
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
     const response =
@@ -32,14 +31,11 @@ export const getPlannedExpenditures = createAsyncThunk(
   async (data) => {
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
-    // console.log("getPlannedExpenditures", data);
     const response =
       await repositoryService.expenditureRepository.getMyPlannedExpenditures(
         data,
         token
       );
-    // console.log("getPlannedExpenditures", response);
-    // console.log("getPlannedExpenditures", response);
     return response;
   }
 );
@@ -63,10 +59,22 @@ export const createBudget = createAsyncThunk(
   async (data) => {
     const repositoryService = new RepositoryService();
     const token = await AsyncStorage.getItem("token");
-    console.log("createBudget", data);
     const response =
       await repositoryService.expenditureRepository.createMyBudget(data, token);
-    console.log("createBudget", response);
+    return response;
+  }
+);
+
+export const getMyBudget = createAsyncThunk(
+  "expenditure/getMyBudget",
+  async (data) => {
+    const repositoryService = new RepositoryService();
+    const token = await AsyncStorage.getItem("token");
+    const response = await repositoryService.expenditureRepository.getBudget(
+      data,
+      token
+    );
+
     return response;
   }
 );
@@ -131,10 +139,6 @@ export const expenditureSlice = createSlice({
       (state, action) => {
         state.expenditures = action.payload.values.transactions;
         state.totalAmount = action.payload.values.totalExpenditure;
-        // console.log(
-        //   "getExpendituresFromCurrentMonth.fulfilled",
-        //   action.payload.values.transactions
-        // );
         state.loading = false;
       }
     );
@@ -149,7 +153,6 @@ export const expenditureSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(getPlannedExpenditures.fulfilled, (state, action) => {
-      // console.log("getPlannedExpenditures.fulfilled", action.payload);
       state.plannedExpenditures = action.payload.values.values;
       state.loading = false;
     });
@@ -162,7 +165,6 @@ export const expenditureSlice = createSlice({
     });
     builder.addCase(compareToLastMonth.fulfilled, (state, action) => {
       state.compareToLastMonthPercentage = action.payload;
-      //   console.log("compareToLastMonth.fulfilled", action.payload);
       state.loading = false;
     });
     builder.addCase(compareToLastMonth.rejected, (state, action) => {
@@ -173,11 +175,23 @@ export const expenditureSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(createBudget.fulfilled, (state, action) => {
-      state.budget = action.payload;
+      state.budget = action.payload.values.values;
       state.loading = false;
     });
     builder.addCase(createBudget.rejected, (state, action) => {
       state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(getMyBudget.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getMyBudget.fulfilled, (state, action) => {
+      state.budget = action.payload.values.values;
+      state.loading = false;
+    });
+    builder.addCase(getMyBudget.rejected, (state, action) => {
+      state.loading = false;
+
       state.error = action.error.message;
     });
   },

@@ -13,14 +13,11 @@ export const getAllAccounts = createAsyncThunk(
   "account/allAccounts",
 
   async () => {
-    // console.log("getAllAccounts in redux");
     const token = await AsyncStorage.getItem("token");
     const repositoryService = new RepositoryService();
-    // console.log("token", token);
     const response = await repositoryService.accountRepository.getAllAccount(
       token
     );
-    // console.log("response", response);
     return response;
   }
 );
@@ -43,7 +40,6 @@ export const accountSlice = createSlice({
   initialState,
   reducers: {
     setSelectedAccount: (state, action) => {
-      // console.log("action.payload", action.payload);
       state.selectedAccount = action.payload;
     },
     addAmountToSelectedAccount: (state, action) => {
@@ -67,11 +63,22 @@ export const accountSlice = createSlice({
     });
     builder.addCase(getAllAccounts.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("action.payload", action.payload);
       state.accounts = action.payload.values;
-      // console.log("state.accounts", JSON.stringify(state.accounts));
     });
     builder.addCase(getAllAccounts.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteAccount.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteAccount.fulfilled, (state, action) => {
+      state.loading = false;
+      state.accounts = state.accounts.filter(
+        (account) => account.id !== action.payload.message.id
+      );
+    });
+    builder.addCase(deleteAccount.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });

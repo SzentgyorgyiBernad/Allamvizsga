@@ -9,17 +9,14 @@ export default class TransactionRepository extends BaseRepository {
   }
 
   async getIncomeByMonths(body, token) {
-    // console.log("getIncomeByMonths in repository", body);
     response = await this.api.get("transaction/incomeByMonths/" + body, {
       body,
       token,
     });
-    // console.log("response", response);
     return response;
   }
 
   async getLastThreeTransactions(body, token) {
-    // console.log("getLastThreeTransactions in repository", body);
     response = await this.api.get("transaction/lastThreeTransactions/" + body, {
       body,
       token,
@@ -28,11 +25,22 @@ export default class TransactionRepository extends BaseRepository {
   }
 
   async createTransaction(body, token) {
-    // console.log("createTransaction in repository", body);
     response = await this.api.post("transaction/createTransaction", {
       body,
       token,
     });
+    return response;
+  }
+
+  async getAllMyTransactionWithDate(body, token) {
+    console.log("body", body);
+    response = await this.api.get(
+      "transaction/allTransactionWithDate/" + body.accountId + "/" + body.date,
+      {
+        body,
+        token,
+      }
+    );
     return response;
   }
 }

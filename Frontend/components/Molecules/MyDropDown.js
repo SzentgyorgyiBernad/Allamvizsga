@@ -4,13 +4,11 @@ import { Picker } from "@react-native-picker/picker";
 
 const MyDropDown = ({ items, setSelectedCurrency }) => {
   const [selectedValue, setSelectedValue] = useState(items[0]);
-  // console.log("items", items.values[0]);
 
   const handleValueChange = (itemValue, itemIndex) => {
     setSelectedValue(itemValue);
     setSelectedCurrency(itemValue);
   };
-  // console.log("items", items);
 
   return (
     <View style={styles.dropDown}>
@@ -21,7 +19,6 @@ const MyDropDown = ({ items, setSelectedCurrency }) => {
       >
         {items &&
           items.map((item, index) => (
-            // console.log("item", item),
             <Picker.Item key={index} label={item} value={item} />
           ))}
       </Picker>

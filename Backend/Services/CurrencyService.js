@@ -9,12 +9,9 @@ async function getAllCurrency() {
         name: true,
       },
     });
-    // console.log(currencies);
     const currencyValues = currencies.map((item) => item.name);
-    // console.log("Currency service", currencyValues);
     return { currencies: currencyValues };
   } catch (error) {
-    // console.log(error.message);
     return "Internal server error";
   }
 }

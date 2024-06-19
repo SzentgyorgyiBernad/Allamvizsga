@@ -38,12 +38,10 @@ export const useIncomeScreenLogic = () => {
   };
 
   const getTransactions = () => {
-    // console.log("getTransactions in logic", selectedAccount);
     dispatch(getTransactionsFromCurrentMonth(selectedAccount.id));
   };
 
   const getMyPlannedTransactions = () => {
-    // console.log("getMyPlannedTransactions in logic", selectedAccount);
     dispatch(getPlannedTransactions(selectedAccount.id));
   };
   const getCompareToLastMonth = () => {
@@ -68,7 +66,6 @@ export const useIncomeScreenLogic = () => {
   };
 
   const addMoney = (amount, goalId) => {
-    console.log("addMoney", amount, goalId);
     dispatch(addMoneyToGoal({ amount, goalId }));
     dispatch(addMoneyToGoals(amount, goalId));
   };

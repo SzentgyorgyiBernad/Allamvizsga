@@ -7,6 +7,9 @@ import { ArrowUpRight,ArrowDownRight  } from 'react-native-feather'
 
 
 const ExpenditureScreen = () => {
+  const [visibleAllExpenditures, setVisibleAllExpenditures] = React.useState(false);
+  const [visibleAllPlannedExpenditures, setVisibleAllPlannedExpenditures] = React.useState(false);
+
   const {
     expenditures,
     totalAmount,
@@ -22,13 +25,15 @@ const ExpenditureScreen = () => {
     getCompareToLastMonth,
     budgetAmount,
     setBudgetAmount,
-    setBudget
+    setBudget,
+    getBudget
     } = useExpenditureScreenLogic();
 
     useEffect(() => {
       getExpenditures()
       getMyPlannedExpenditures()
       getCompareToLastMonth()
+      getBudget()
     }, [selectedAccount]);
 
     const renderPercentage = (data) => {
@@ -42,16 +47,16 @@ const ExpenditureScreen = () => {
       if(data > 0) {
         return (
           <View style={{flexDirection: 'row', gap: 8, width: "90%", height: 50, justifyContent: 'center', alignItems: 'center'}}>
-            <ArrowUpRight style={{color: 'green', }}/>
-            <Text style={{color: 'green', fontSize: 18}}>+{data}%</Text>
+            <ArrowUpRight style={{color: 'red', }}/>
+            <Text style={{color: 'red', fontSize: 18}}>+{data}%</Text>
             
           </View>
         )
       }
       return (
         <View style={{flexDirection: 'row', gap: 8, width: "90%", height: 50, justifyContent: 'center', alignItems: 'center'}}>
-          <ArrowDownRight style={{color: 'red', }}/>
-          <Text style={{color: 'red', fontSize: 18}}>-{data}%</Text> 
+          <ArrowDownRight style={{color: 'green', }}/>
+          <Text style={{color: 'green', fontSize: 18}}>-{data}%</Text> 
         </View>
       )
     }
@@ -70,18 +75,40 @@ const ExpenditureScreen = () => {
         </View>
       )
     }
-
-    const renderExpenditure = () => {
+    const renderThreeExpenditure = () => {
       if (loading) {
         return <Text>Loading...</Text>;
       }
       if(expenditures.length === 0) {
         return <Text>No transactions found yet!</Text>
       }
-      const firstThreeTransactions = expenditures.slice(0, 3);
-      // console.log("firstThreeTransactions", firstThreeTransactions[0]);
-      return firstThreeTransactions.map((item, index) => (
-        <View key={index} style={{ paddingBottom: 6 }}>
+      return (
+        <FlatList
+          data={expenditures.slice(0, 3)}
+          renderItem={renderExpenditure}
+          keyExtractor={(item) => item.id.toString()}
+        >
+        </FlatList>
+      )
+    }
+
+    const renderThreePlannedExpenditure = () => {
+      if(plannedExpenditures.length === 0) {
+        return <Text>No planned expenditures found yet!</Text>
+      }
+      const firstThreePlannedExpenditures = plannedExpenditures.slice(0, 3);
+      return (
+        <FlatList
+          data={firstThreePlannedExpenditures.slice(0, 3)}
+          renderItem={renderPlannedExpenditure}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      )
+    }
+
+    const renderExpenditure = ({item}) => {
+      return  (
+        <View style={{ paddingBottom: 6 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ height: 6, width: 6, backgroundColor: COLORS.red, borderRadius: 15, marginRight: 8 }}></View>
@@ -94,11 +121,10 @@ const ExpenditureScreen = () => {
           <Text style={{fontSize: 10}}>{item.date.split("T")[0].split("-").join(". ")}</Text>
         </View>
       </View>
-      ));
+      );
     }
 
     const renderPlannedExpenditure = ({item}) => {
-      // console.log("item", item);
       return(
         <View style={{ paddingBottom: 6 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -120,7 +146,6 @@ const ExpenditureScreen = () => {
 
     const renderBudget = () => {
       if(budget.length === 0) {
-        // console.log("budget", budget);
         return (
           <View style={{paddingHorizontal: 12, paddingVertical: 10}}>
             <Text>No budget set yet!</Text>
@@ -160,26 +185,52 @@ const ExpenditureScreen = () => {
           </View>
         )
       } else{
-        console.log("Van budget")
-        // return (
-        //   <View>
-        //     <Text>Budget: {budget.amount} {selectedAccount.currency.name.split(" ")[1]}</Text>
-        //     <Pressable style={styles.buttonStyle}>
-        //       <Text>Change budget</Text>
-        //     </Pressable>
-        //   </View>
-        // )
+
+        return (
+          <View>
+            <View style={styles.budgetContainer}>
+              <View style={[styles.budgetBar, { width: `${(-totalAmount / budget[0].amount) * 100}%` }]} >
+                <Text style={{color: 'black', fontSize: 12, paddingLeft: 4}}>{-totalAmount} </Text>
+                
+              </View>
+              <Text style={{color: 'black', fontSize: 12, paddingLeft: 4}}> {budget[0].amount}</Text>
+            </View>
+            <Pressable style={styles.buttonStyle}>
+              <Text style={{textAlign: 'center'}}>Change budget</Text>
+            </Pressable>
+          </View>
+        )
       }
     }
 
-    const renderThreePlannedExpenditure = () => {
-      if(plannedExpenditures.length === 0) {
-        return <Text>No planned expenditures found yet!</Text>
+    
+
+    const renderAllExpenditures = () => {
+      if (loading) {
+        return <Text>Loading...</Text>;
       }
-      const firstThreePlannedExpenditures = plannedExpenditures.slice(0, 3);
+      if(expenditures.length === 0) {
+        return <Text>No transactions found yet!</Text>
+      }
       return (
         <FlatList
-          data={firstThreePlannedExpenditures.slice(0, 3)}
+          data={expenditures}
+          renderItem={renderExpenditure}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      )
+    }
+
+    const renderAllPlannedExpenditures = () => {
+      if (loading) {
+        return <Text>Loading...</Text>;
+      }
+      if(expenditures.length === 0) {
+        return <Text>No transactions found yet!</Text>
+      }
+      return (
+        <FlatList
+          data={plannedExpenditures}
           renderItem={renderPlannedExpenditure}
           keyExtractor={(item) => item.id.toString()}
         />
@@ -220,33 +271,78 @@ const ExpenditureScreen = () => {
 
         <View style={{borderTopWidth: 1, width: '80%'}}></View>
         <View style={{paddingVertical: 12, paddingHorizontal: 18,width: '100%', height: 190}}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{fontSize: 22}}>Expenditures</Text>
-            <View style={{justifyContent: 'center', alignItems: 'flex-end', left: 60}}>
+            <View style={{justifyContent: 'center', alignItems: 'flex-end'}}>
               <Pressable 
-                onPress
+                onPress={() => setVisibleAllExpenditures(true)}
                 style={{borderRadius: 15, backgroundColor: 'lightgrey', paddingVertical: 4, paddingHorizontal: 6}}>
                 <Text>More...</Text>
               </Pressable>
             </View>
           </View>
           
-          {renderExpenditure()}
+          {renderThreeExpenditure()}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={visibleAllExpenditures}
+            onRequestClose={() => {
+              setVisibleAllExpenditures(!visibleAllExpenditures);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+              <Pressable onPress={() => setVisibleAllExpenditures(false)} style={{position: 'absolute', top: 5, right: 5, padding: 12}}>
+                <Text>Close</Text>
+              </Pressable>
+                <View style={{paddingBottom: 12}}>
+                  <Text style={{fontSize: 22}}>All expenditures</Text>
+                </View>
+                <View style={{width: '80%', height: 400}}>
+                {renderAllExpenditures()}
+                </View>
+              </View>
+            </View>
+
+          </Modal>
         </View>
         <View style={{borderTopWidth: 1, width: '80%'}}></View>
         <View style={{paddingVertical: 12, paddingHorizontal: 18, width: '100%', height: 190}}>
-          <View style={{flexDirection: 'row', width: 260}}>
-            <Text style={{fontSize: 22}}>Planned expenditure</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text style={{fontSize: 22}}>Planned expenditures</Text>
             <View style={{justifyContent: 'center', alignItems: 'flex-end'}}>
-                <Pressable 
-                  onPress
-                  style={{borderRadius: 15, backgroundColor: 'lightgrey', paddingVertical: 4, paddingHorizontal: 6}}>
-                  <Text>More...</Text>
-                </Pressable>
-              </View>
+              <Pressable 
+                onPress={() => setVisibleAllPlannedExpenditures(true)}
+                style={{borderRadius: 15, backgroundColor: 'lightgrey', paddingVertical: 4, paddingHorizontal: 6}}>
+                <Text>More...</Text>
+              </Pressable>
+            </View>
           </View>
           
             {renderThreePlannedExpenditure()}
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={visibleAllPlannedExpenditures}
+              onRequestClose={() => {
+                setVisibleAllPlannedExpenditures(!visibleAllPlannedExpenditures);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                <Pressable onPress={() => setVisibleAllPlannedExpenditures(false)} style={{position: 'absolute', top: 5, right: 5, padding: 12}}>
+                  <Text>Close</Text>
+                </Pressable>
+                  <View style={{paddingBottom: 12}}>
+                    <Text style={{fontSize: 22}}>All planned expenditures</Text>
+                  </View>
+                  {renderAllPlannedExpenditures()}
+                </View>
+              </View>
+
+
+            </Modal>
         </View>
       </View>
 
@@ -306,7 +402,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: "90%", 
-    height: 300, 
+    height: 500, 
   },
   input: {
     height: 40,
@@ -366,5 +462,23 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: "70%", 
     height: 230, 
+  },
+  budgetBar: {
+    height: 20,
+    backgroundColor: 'red',
+    borderRadius: 15,
+    left: 0,
+    top: 0,
+    justifyContent: 'space-between',
+    flexDirection: 'row'
+  },
+  budgetContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // marginTop: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderRadius: 15,
+    
   },
 })

@@ -13,17 +13,13 @@ export const RootNavigation = () => {
   const user = authState.email;
   const userRegistration = authState.registration;
   const final = accountCreateState.final;
-  // console.log("final lekeresekor", final);
   const dispatch = useDispatch();
-  // console.log("userToken", userToken);
 
   useEffect(() => {
-    // console.log("useEffect");
     dispatch(loginSilently());
   }, []);
 
   if (userLoading) {
-    // console.log("userLoading");
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size={"large"} />
@@ -32,17 +28,13 @@ export const RootNavigation = () => {
   }
 
   if (!user) {
-    // console.log("nincs userToken");
     return <AuthStack />;
   }
   if (final == true) {
-    // console.log("Itt megy a menube");
     return <TabNavigation />;
   }
   if (user && userRegistration == true) {
-    // console.log("user van, es atdob a main account create screenre");
     return <DefaultAccountCreateStack />;
   }
-  // console.log("Itt megy a menube");
   return <TabNavigation />;
 };

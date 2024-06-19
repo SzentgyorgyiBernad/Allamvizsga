@@ -17,7 +17,6 @@ export const useInvoiceCreateScreenLogic = () => {
   const dispatch = useDispatch();
 
   const getAllCurrency = () => {
-    // console.log("get all currency");
     dispatch(getAllCurrencyFromDB());
   };
 

@@ -54,7 +54,7 @@ app.get(
 app.delete(
   "/account/deleteAccount/:id",
   authMiddleware.authJWT,
-  defaultAccountController.accountDelete
+  accountController.deleteAccount
 );
 //TransactionType
 app.get(
@@ -77,6 +77,11 @@ app.get(
   "/transaction/lastThreeTransactions/:id",
   authMiddleware.authJWT,
   transactionTypeController.getLastThreeTransactions
+);
+app.get(
+  "/transaction/allTransactionWithDate/:id/:period",
+  authMiddleware.authJWT,
+  transactionTypeController.getAllMyTransactionWithDate
 );
 //Income
 app.get(

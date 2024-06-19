@@ -37,8 +37,6 @@ async function getMyExpenditureFromCurrentMonth(accountId) {
     transactions.forEach((transaction) => {
       totalExpenditure += transaction.amount;
     });
-    // console.log("Total Expenditure", totalExpenditure);
-    // console.log("Transactions", transactions);
     return { transactions: transactions, totalExpenditure: totalExpenditure };
   } catch (error) {
     return { error: error.message };
@@ -122,13 +120,9 @@ async function compareToLastMonth(accountId) {
 
 async function getMyPlannedExpenditures(accountId) {
   try {
-    // console.log("Account Id", accountId);
     const now = new Date();
     const startMonth = now.getMonth() + 1;
     const endDate = new Date(now.getFullYear(), startMonth, 1);
-    // console.log("Now", now);
-    // console.log("End Date", endDate);
-    // console.log("Start Month", startMonth);
 
     const plannedExpenditures = await prisma.income.findMany({
       where: {
@@ -170,7 +164,6 @@ async function getMyPlannedExpenditures(accountId) {
       }
     );
 
-    // console.log("Planned Expenditures", plannedExpenditures);
     return { values: transactionsWithDaysRemaining };
   } catch (error) {
     return { error: error.message };
@@ -179,7 +172,6 @@ async function getMyPlannedExpenditures(accountId) {
 
 async function createMyBudget(body) {
   try {
-    console.log("Body", body);
     const newBudget = await prisma.expenditure_plan.create({
       data: {
         id: body.id,
@@ -189,14 +181,13 @@ async function createMyBudget(body) {
         },
       },
     });
-    console.log("New newBudget", newBudget);
     return { values: newBudget };
   } catch (error) {
     return { error: error.message };
   }
 }
 
-async function getMyBudget(accountId) {
+async function getBudget(accountId) {
   try {
     const budget = await prisma.expenditure_plan.findMany({
       where: {
@@ -207,7 +198,6 @@ async function getMyBudget(accountId) {
         amount: true,
       },
     });
-    // console.log("Budget", budget);
     return { values: budget };
   } catch (error) {
     return { error: error.message };
@@ -219,5 +209,5 @@ module.exports = {
   compareToLastMonth,
   getMyPlannedExpenditures,
   createMyBudget,
-  getMyBudget,
+  getBudget,
 };

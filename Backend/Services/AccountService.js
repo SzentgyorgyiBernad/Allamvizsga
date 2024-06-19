@@ -21,6 +21,16 @@ async function getAccounts(userId) {
   return accounts;
 }
 
+async function deleteMyAccount(id) {
+  const account = await prisma.accounts.delete({
+    where: {
+      id: id.id,
+    },
+  });
+  return account;
+}
+
 module.exports = {
   getAccounts,
+  deleteMyAccount,
 };
