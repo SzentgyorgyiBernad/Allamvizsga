@@ -1,24 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { TabNavigation } from "./TabNavigation/TabNavigation";
 import { ActivityIndicator, View } from "react-native";
 import { AuthStack } from "./StackNavigation/AuthStack";
-import { Default } from "./StackNavigation/Default";
+import { DefaultAccountCreateStack } from "./StackNavigation/DefaultAccountCreateStack";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSilently } from "../Redux/Auth/AuthSlice";
 
 export const RootNavigation = () => {
   const authState = useSelector((state) => state.authReducer);
+  const accountCreateState = useSelector((state) => state.accountCreateReducer);
   const userLoading = authState.loading;
-  const userEmail = authState.email;
-  const userToken = authState.token;
+  const user = authState.email;
   const userRegistration = authState.registration;
+  const final = accountCreateState.final;
   const dispatch = useDispatch();
-  const handleSignInSilently = () => {
-    dispatch(loginSilently());
-  };
 
   useEffect(() => {
-    handleSignInSilently();
+    dispatch(loginSilently());
   }, []);
 
   if (userLoading) {
@@ -29,14 +27,14 @@ export const RootNavigation = () => {
     );
   }
 
-  if (!userToken) {
+  if (!user) {
     return <AuthStack />;
   }
-  if (userToken && userRegistration == true) {
-    authState.registration = false;
-    console.log("Itt kellene a defaultra dobjon");
-    return <Default />;
+  if (final == true) {
+    return <TabNavigation />;
   }
-
+  if (user && userRegistration == true) {
+    return <DefaultAccountCreateStack />;
+  }
   return <TabNavigation />;
 };

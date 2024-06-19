@@ -1,17 +1,27 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native";
 import COLORS from "../../constants/colors";
 
-const MyInput = ({ text, setText, placeholder, secure, error }) => {
+const MyInput = ({
+  value,
+  onChangeText,
+  placeholder,
+  secure,
+  error,
+  keyboardType,
+}) => {
   return (
-    <TextInput
-      style={[styles.input, error && styles.error]}
-      placeholder={placeholder}
-      onChangeText={setText}
-      value={text}
-      secureTextEntry={secure}
-    />
+    <View>
+      <TextInput
+        style={[styles.input, error && styles.error]}
+        placeholder={placeholder}
+        onChangeText={(text) => onChangeText(text)}
+        value={value}
+        secureTextEntry={secure}
+        keyboardType={keyboardType ? "number-pad" : "default"}
+      />
+    </View>
   );
 };
 
@@ -23,6 +33,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     borderColor: COLORS.primary,
+    paddingHorizontal: 12,
   },
   error: {
     borderColor: COLORS.red,

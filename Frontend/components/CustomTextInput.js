@@ -1,9 +1,7 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import React, { useState } from "react";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../constants/colors";
-import Label from "./Atoms/Label";
-import MyInput from "./Molecules/MyInput";
+import { Mail, Lock } from "react-native-feather";
 
 const CustomTextInput = ({
   label,
@@ -16,35 +14,24 @@ const CustomTextInput = ({
 }) => {
   const [hidePassword, setHidePassword] = React.useState(password);
 
+  const Icon = (iconName) => {
+    if (iconName === "email") {
+      return <Mail style={{ fontSize: 12, paddingLeft: 4 }} />;
+    } else if (iconName === "lock") {
+      return <Lock style={{ fontSize: 22, paddingLeft: 4 }} />;
+    }
+  };
+
   return (
-    <View style={{ marginTop: 20 }}>
+    <View>
       <Text style={{ marginLeft: 10, fontSize: 18, color: COLORS.primary }}>
         {label}
       </Text>
 
-      <View
-        style={{
-          height: 40,
-          borderWidth: 2,
-          borderRadius: 15,
-          width: "100%",
-          flexDirection: "row",
-          alignItems: "center",
-          marginTop: 12,
-          borderColor: error ? COLORS.red : COLORS.primary,
-        }}
-      >
-        <Icon
-          name={iconName}
-          style={{
-            alignItems: "center",
-            marginHorizontal: 8,
-            fontSize: 24,
-            color: COLORS.primary,
-          }}
-        ></Icon>
+      <View style={styles.container}>
+        {Icon(iconName)}
         <TextInput
-          style={{ width: "75%" }}
+          style={{ width: "100%" }}
           secureTextEntry={hidePassword}
           {...props}
           placeholderTextColor={COLORS.grey}
@@ -69,3 +56,18 @@ const CustomTextInput = ({
 };
 
 export default CustomTextInput;
+
+const styles = StyleSheet.create({
+  container: {
+    borderWidth: 1,
+    height: 40,
+    borderWidth: 2,
+    borderRadius: 15,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    borderColor: COLORS.primary,
+    // borderColor: error ? COLORS.red : COLORS.primary,
+  },
+});

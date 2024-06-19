@@ -1,15 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-//Just for debugging
-import { StartBalanceScreen } from "../../screens";
+import IncomeScreen from "../../screens/IncomeScreen/IncomeScren";
 
-export const Default = () => {
+export const IncomeStack = () => {
   const Stack = createNativeStackNavigator();
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
-        component={StartBalanceScreen}
-        name="StartBalanceScreen"
+        component={IncomeScreen}
+        name="IncomeScreen"
         screenOptions={{ headerShown: false }}
       />
     </Stack.Navigator>

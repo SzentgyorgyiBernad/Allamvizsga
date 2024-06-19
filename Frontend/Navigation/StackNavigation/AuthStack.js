@@ -1,8 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../../screens/LoginScreen/Login";
 import Register from "../../screens/RegisterScreen/Register";
-//Just for debugging
-import { StartBalanceScreen } from "../../screens";
 
 export const AuthStack = () => {
   const Stack = createNativeStackNavigator();
@@ -14,7 +12,11 @@ export const AuthStack = () => {
         name="Login"
         screenOptions={{ headerShown: false }}
       />
-      <Stack.Screen component={Register} name="Register" />
+      <Stack.Screen
+        component={Register}
+        name="Register"
+        screenOptions={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

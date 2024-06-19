@@ -19,27 +19,38 @@ model User {
   password String
 
   accounts Accounts[]
-
-  user_goal User_goal[]
 }
 
 model Expenditure_plan {
-  id String @id @unique @default(uuid())
+  id     String @id @unique @default(uuid())
+  amount Float
 
-  income_type    Income_types @relation(fields: [income_type_id], references: [id])
-  income_type_id Int
+  account    Accounts @relation(fields: [account_id], references: [id])
+  account_id String
+}
+
+model Currency {
+  id   Int    @unique
+  name String
+
+  accounts Accounts[]
 }
 
 model Accounts {
   id      String  @id @unique @default(uuid())
   name    String
   amount  Float   @default(0)
-  default Boolean // TODO Recreate the database.
+  default Boolean @default(false)
+
+  currency      Currency @relation(fields: [currency_name], references: [id])
+  currency_name Int
 
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
 
-  income Income[]
+  income           Income[]
+  user_goal        User_goal[]
+  expenditure_plan Expenditure_plan[]
 }
 
 model Income {
@@ -60,19 +71,19 @@ model Income {
 model Income_types {
   id        Int    @id @unique @default(autoincrement())
   name      String
-  in_or_out Int
+  in_or_out String
 
-  income           Income[]
-  expenditure_plan Expenditure_plan[]
+  income Income[]
 }
 
 model User_goal {
-  id             String   @id @unique @default(uuid())
-  name           String
-  description    String?
-  remaining_time Float
-  end_date       DateTime
+  id          String   @id @unique @default(uuid())
+  endAmount   Float
+  amount      Float
+  name        String
+  description String?
+  end_date    DateTime
 
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id String
+  accounts   Accounts @relation(fields: [account_id], references: [id])
+  account_id String
 }
