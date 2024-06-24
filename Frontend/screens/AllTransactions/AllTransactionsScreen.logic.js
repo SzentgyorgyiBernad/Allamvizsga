@@ -45,7 +45,6 @@ export const useAllTransactionsScreenLogic = () => {
       now.setDate(now.getDate() - 6);
       const date = now.toISOString().split("T")[0];
       const fullDate = `${date}T00:00:00.000Zl`;
-      //   console.log("fullDate", fullDate);
       dispatch(
         getAllTransactionWithDate({
           accountId: selectedAccount.id,
@@ -56,7 +55,6 @@ export const useAllTransactionsScreenLogic = () => {
     }
     if (period === "month") {
       const now = new Date();
-      //   console.log("now", now);
       const year = now.getFullYear();
       let month = now.toISOString().split("-")[1] - 1;
       if (month <= 9 && month > 0) {
@@ -64,7 +62,6 @@ export const useAllTransactionsScreenLogic = () => {
       }
       const day = now.getDate();
       const fullDate = `${year}-${month}-${day}T00:00:00.000Zl`;
-      //   console.log("fullDate", fullDate);
       dispatch(
         getAllTransactionWithDate({
           accountId: selectedAccount.id,
@@ -81,9 +78,7 @@ export const useAllTransactionsScreenLogic = () => {
         month = `0${month + 1}`;
       }
       const day = now.getDate();
-      console.log("year", now, year, month, day);
       const fullDate = `${year}-${month}-${day}T00:00:00.000Zl`;
-      console.log("fullDate", fullDate);
       dispatch(
         getAllTransactionWithDate({
           accountId: selectedAccount.id,

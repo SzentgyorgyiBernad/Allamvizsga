@@ -141,16 +141,10 @@ export const transactionSlice = createSlice({
     });
     builder.addCase(getAllTransactionWithDate.fulfilled, (state, action) => {
       state.loading = false;
-      // console.log("action.payload", action.payload.values);
-      // console.log("action.payload", action.payload.values.income);
       state.allTransaction = action.payload.values.transactionValues;
-      // console.log("allTransaction", state.allTransaction);
       state.incomeType = action.payload.values.incomeTypeValues;
-      // console.log("incomeType", state.incomeType);
       state.outcomeType = action.payload.values.outcomeTypeValues;
-      // console.log("outcomeType", state.outcomeType);
       state.incomeNumber = action.payload.values.income;
-      // console.log("incomeNumber", state.incomeNumber);
       state.expenditureNumber = action.payload.values.outcome;
       state.incomeAmount = action.payload.values.incomeAmount;
       state.expenditureAmount = action.payload.values.outcomeAmount;

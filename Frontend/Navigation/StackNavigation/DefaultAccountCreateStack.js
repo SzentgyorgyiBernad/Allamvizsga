@@ -1,5 +1,4 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-//Just for debugging
 import DefaultAccountCreateScreen from "../../screens/DefaultAccountCreateScreen/DefaultAccountCreateScreen";
 
 export const DefaultAccountCreateStack = () => {

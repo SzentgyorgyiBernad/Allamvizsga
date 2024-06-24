@@ -10,7 +10,6 @@ const app = express();
 const router = express.Router();
 
 app.use(express.json());
-app.use(express.json());
 app.use(cors());
 
 const AuthController = require("./Controller/Auth/AuthController");

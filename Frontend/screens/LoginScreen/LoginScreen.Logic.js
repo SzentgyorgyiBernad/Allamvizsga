@@ -1,7 +1,7 @@
 import React from "react";
-import { useAppDispatch } from "../../Hooks/hooks";
+
 import { login } from "../../Redux/Auth/AuthSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 export const useLoginScreenLogic = () => {
   const [email, setEmail] = React.useState("");
@@ -11,7 +11,7 @@ export const useLoginScreenLogic = () => {
   const authState = useSelector((state) => state.authReducer);
   const myError = authState.error;
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const handleError = (key, message) => {
     setError((prevState) => ({ ...prevState, [key]: message }));

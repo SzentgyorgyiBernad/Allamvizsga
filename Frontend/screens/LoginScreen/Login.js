@@ -56,7 +56,6 @@ const Login = ({ navigation }) => {
               iconName="lock-outline"
               label="Password"
               placeholder="Enter your password"
-              // error={errors.password}
               onChangetext={setPassword}
               password
               value={password}

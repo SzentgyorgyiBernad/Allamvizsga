@@ -59,7 +59,6 @@ export const useAddNewTransactionScreenLogic = () => {
         selectedAccount: selectedAccount.id,
       };
       dispatch(addExpenditure(newTransaction));
-      console.log(newTransaction);
     } else {
       dispatch(
         createNewTransaction({
@@ -88,14 +87,7 @@ export const useAddNewTransactionScreenLogic = () => {
         selectedAccount: selectedAccount.id,
       };
       dispatch(addIncome(newTransaction));
-      console.log(newTransaction);
     }
-    // console.log(
-    //   amount,
-    //   selectedAccount,
-    //   selectedTransaction,
-    //   selectedTransactionType
-    // );
   };
 
   return {

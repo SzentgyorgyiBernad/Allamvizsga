@@ -11,8 +11,6 @@ export const useRegisterScreenLogic = () => {
 
   const [error, setError] = React.useState({});
 
-  // const myError = authState.error;
-
   React.useEffect(() => {
     handleError("state", authState.error);
   }, [authState.error]);

@@ -1,6 +1,3 @@
-// import { logout } from "../Redux/Auth/AuthSlice";
-// import { store } from "../Redux/store";
-
 export default class ApiService {
   baseUrl = "http://192.168.0.191:8000";
 
@@ -16,7 +13,6 @@ export default class ApiService {
   }
 
   async fetchData(endPoint, method, options) {
-    console.log("endPoint", endPoint);
     try {
       const response = await fetch(`${this.baseUrl}/${endPoint}`, {
         method,
@@ -32,7 +28,7 @@ export default class ApiService {
       }
       return await response.json();
     } catch (error) {
-      return null;
+      return error;
     }
   }
 

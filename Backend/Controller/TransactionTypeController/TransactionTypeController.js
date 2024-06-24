@@ -47,8 +47,6 @@ module.exports = class TransactionTypeController {
     try {
       const accountId = req.params.id;
       const period = req.params.period;
-      // console.log(req);
-      console.log("body", accountId, period);
       const response = await TransactionTypeService.getAllTransactionWithDate({
         accountId,
         period,

@@ -6,7 +6,6 @@ module.exports = class CurrencyController {
       const currencies = await CurrencyService.getAllCurrency();
       res.status(200).json({ values: currencies.currencies });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }

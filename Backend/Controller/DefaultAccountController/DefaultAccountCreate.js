@@ -30,7 +30,6 @@ module.exports = class DefaultAccountController {
 
       res.status(200).json({ message: "Account created" });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }

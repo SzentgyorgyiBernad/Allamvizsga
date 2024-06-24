@@ -388,7 +388,7 @@ const IncomeScren = () => {
                      onChangeText={(value) => setGoalAmount(value)}/>
                   <Text style={{fontSize: 18}}> Description</Text>
                   <TextInput
-                     value={goalname}
+                     value={description}
                      placeholder='Description...'
                      style={styles.input} 
                      onChangeText={(value) => setDescription(value)}/>

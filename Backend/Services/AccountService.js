@@ -17,7 +17,6 @@ async function getAccounts(userId) {
       },
     },
   });
-  // console.log(accounts);
   return accounts;
 }
 
