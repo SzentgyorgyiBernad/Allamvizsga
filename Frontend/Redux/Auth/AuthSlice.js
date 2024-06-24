@@ -4,7 +4,6 @@ import RepositoryService from "../../Services/RepositoryService";
 
 const initialState = {
   email: null,
-  password: null,
   loading: false,
   error: undefined,
   token: null,

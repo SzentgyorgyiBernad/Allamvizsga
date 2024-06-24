@@ -4,7 +4,6 @@ import { IncomeStack } from "../StackNavigation/IncomeStack";
 import { ExpenditureStack } from "../StackNavigation/ExpenditureStack";
 import { Home, Download, Upload, Plus } from "react-native-feather";
 import { AddNewTransactionStack } from "../StackNavigation/AddNewTransactionStack";
-import { Text } from "react-native";
 
 export const TabNavigation = () => {
   const Tab = createBottomTabNavigator();

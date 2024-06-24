@@ -46,7 +46,6 @@ const AddNewTransactionScreen = () => {
     }
 
     const renderTypeButton = ({item}) => {
-        // console.log('Item:', item)
         return (
             <Pressable onPress={() => setSelectedTransactionType(item)}
             style={({ pressed }) => [
@@ -70,7 +69,6 @@ const AddNewTransactionScreen = () => {
         if(transactionTypes.length === 0) {
             return <Text>No transaction types found.</Text>
         }
-        // console.log('Transaction Types:', transactionTypes)
         return (
                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8, paddingTop: 6}}>
                    {transactionTypes.map(item => (
@@ -185,7 +183,6 @@ const AddNewTransactionScreen = () => {
             <View style={{ width: "90%", gap: 5}}>
                 <Text style={styles.title}>Date</Text>
                  <Pressable style={styles.dateButton} onPress={() => setVisible(true)}>
-                    {/* {console.log('Date:', date)} */}
                     <Text style={{textAlign: 'center'}}>{date.toISOString().split('T')[0]}</Text>
                 </Pressable>   
                 <DateTimePickerModal 

@@ -8,7 +8,6 @@ module.exports = class ExpenditureController {
         await ExpenditureService.getMyExpenditureFromCurrentMonth(accountId.id);
       res.status(200).json({ values: expenditures });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -21,7 +20,6 @@ module.exports = class ExpenditureController {
       );
       res.status(200).json({ values: percentage });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -33,7 +31,6 @@ module.exports = class ExpenditureController {
         await ExpenditureService.getMyPlannedExpenditures(accountId.id);
       res.status(200).json({ values: plannedExpenditures });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }

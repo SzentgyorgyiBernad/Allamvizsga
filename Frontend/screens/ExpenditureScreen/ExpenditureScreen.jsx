@@ -356,7 +356,6 @@ const styles = StyleSheet.create({
   titleCard: {
     position: "relative",
     top: 0,
-    // justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.white,
     height: 50,
@@ -366,7 +365,6 @@ const styles = StyleSheet.create({
   },
   incomeCard: {
     width: "90%",
-    // height: "80%",
     backgroundColor: COLORS.white,
     borderRadius: 20,
     marginVertical: 8,
@@ -475,7 +473,6 @@ const styles = StyleSheet.create({
   budgetContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // marginTop: 10,
     marginBottom: 10,
     borderWidth: 1,
     borderRadius: 15,

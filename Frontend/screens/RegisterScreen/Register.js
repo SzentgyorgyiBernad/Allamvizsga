@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../constants/colors";
@@ -39,7 +39,7 @@ const Register = ({ navigation }) => {
               fontWeight: "bold",
             }}
           >
-            PLease enter your detals
+            PLease enter your details
           </Text>
           <View style={{ gap: 16, paddingVertical: 16 }}>
             <CustomTextInput

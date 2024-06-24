@@ -10,7 +10,6 @@ module.exports = class AccountController {
       const accounts = await AccountService.getAccounts(user.id);
       res.status(200).json({ values: accounts });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -21,7 +20,6 @@ module.exports = class AccountController {
       const response = await AccountService.deleteMyAccount(id);
       res.status(200).json({ message: response });
     } catch (error) {
-      console.log(error.message);
       res.status(500).json({ error: "Internal server error" });
     }
   }

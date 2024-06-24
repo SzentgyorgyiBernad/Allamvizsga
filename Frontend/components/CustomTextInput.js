@@ -21,7 +21,6 @@ const CustomTextInput = ({
       return <Lock style={{ fontSize: 22, paddingLeft: 4 }} />;
     }
   };
-
   return (
     <View>
       <Text style={{ marginLeft: 10, fontSize: 18, color: COLORS.primary }}>
@@ -68,6 +67,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 8,
     borderColor: COLORS.primary,
-    // borderColor: error ? COLORS.red : COLORS.primary,
   },
 });

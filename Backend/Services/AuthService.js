@@ -4,7 +4,7 @@ const NodeCache = require("node-cache");
 const { PrismaClient } = require("@prisma/client");
 const { v4: uuidv4 } = require("uuid");
 
-const tokenCache = new NodeCache({ stdTTL: 3600 }); //one HOUR
+const tokenCache = new NodeCache({ stdTTL: 3600 });
 const prisma = new PrismaClient();
 
 async function register(email, password) {
@@ -26,7 +26,7 @@ async function register(email, password) {
   });
 
   return {
-    token: createToken(newUser),
+    token: createToken(email),
     email: newUser.email,
   };
 }
@@ -43,7 +43,7 @@ async function login(email, password) {
   }
 
   return {
-    token: createToken(user),
+    token: createToken(email),
     email: user.email,
   };
 }

@@ -33,7 +33,6 @@ export default class TransactionRepository extends BaseRepository {
   }
 
   async getAllMyTransactionWithDate(body, token) {
-    console.log("body", body);
     response = await this.api.get(
       "transaction/allTransactionWithDate/" + body.accountId + "/" + body.date,
       {

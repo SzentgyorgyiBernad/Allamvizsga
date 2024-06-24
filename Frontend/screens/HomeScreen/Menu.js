@@ -459,7 +459,6 @@ const styles = StyleSheet.create({
   card: {
     width: width * 0.839,
     position: "relative",
-    // justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
     padding: 20,
@@ -467,7 +466,6 @@ const styles = StyleSheet.create({
   titleCard: {
     position: "relative",
     top: 0,
-    // justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.white,
     height: 50,
@@ -506,7 +504,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightGray,
     borderRadius: 20,
     marginTop: 20,
-    // borderWidth: 1,
   },
   centeredView: {
     flex: 1,
@@ -527,7 +524,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: "80%", // Szélesség beállítása
-    height: 450, // Magasság beállítása
+    width: "90%",
+    height: 450,
   },
 });

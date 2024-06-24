@@ -124,7 +124,6 @@ const AllTransactionsScreen = () => {
 }
 
     const renderIncomeTypeItem = ({item}) => {
-        console.log("item", item);
         return (
             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 22, marginHorizontal: 12, borderRadius: 4, paddingHorizontal: 4}}>
                 <Text>{item.type}</Text>
@@ -136,7 +135,6 @@ const AllTransactionsScreen = () => {
     }
 
     const renderExpenditureTypeItem = ({item}) => {
-        console.log("item", item);
         return (
             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 22, marginHorizontal: 12, borderRadius: 4, paddingHorizontal: 4}}>
                 <Text>{item.type}</Text>
@@ -218,23 +216,20 @@ const AllTransactionsScreen = () => {
                                         <Text>Close</Text>
                                     </Pressable>
                                     <Calendar
-                                        // current={new Date()}
                                         minDate={'2000-01-01'}
                                         maxDate={'2100-12-31'}
                                         onDayPress={(day) => {
                                             if(day.dateString === startDate) {
                                                 
                                                 setStartDate(null);
-                                                // setEndDate(null);
                                                 return;
                                             }else if(day.dateString === endDate) {
                                                 setEndDate(null);
                                                 return;
                                             }else if (!startDate || new Date(day.dateString) < new Date(startDate)) {
-                                                // Ha még nincs startDate, vagy a kiválasztott nap korábbi, mint a jelenlegi startDate
-                                                setStartDate(day.dateString);  // Beállítjuk az új startDate-t
+                                                setStartDate(day.dateString);  
                                             } else {
-                                                setEndDate(day.dateString);  // Különben beállítjuk az új endDate-t
+                                                setEndDate(day.dateString);  
                                             }
                                         }}
                                         monthFormat={'yyyy MM'}
@@ -296,7 +291,6 @@ const AllTransactionsScreen = () => {
                             <View style={{paddingHorizontal: 28}}>
                                 <FlatList
                                     data={incomeType}
-                                    // keyExtractor={(item) => item.type}
                                     renderItem={renderIncomeTypeItem}
                                 >
 
@@ -312,7 +306,6 @@ const AllTransactionsScreen = () => {
                             <View style={{paddingHorizontal: 28}}>
                                 <FlatList
                                     data={outcomeType}
-                                    // keyExtractor={(item) => item.type}
                                     renderItem={renderExpenditureTypeItem}
                                 >
 
@@ -322,17 +315,7 @@ const AllTransactionsScreen = () => {
                         </View>
 
                 </View>
-    
-                {/* <View style={styles.incomeCard}>
-                    <View style={{width: '100%', paddingHorizontal: 18, paddingVertical: 18}}>
-                    <Text style={{ fontSize: 22, paddingBottom: 8 }}>
-                        All transactions
-                    </Text>
-                    </View>
-                </View> */}
-                
             </View>
-
     </LinearGradient>
   )
 }
@@ -354,8 +337,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 22,
         gap: 8,
-        // paddingTop: 36,
-        // paddingBottom: 20,
         borderRadius: 20,
 
     },
@@ -370,7 +351,6 @@ const styles = StyleSheet.create({
     },
     periodCard: {
         flexDirection: 'row',
-        // justifyContent: 'space-bet',
         gap: 8,
         width: "100%",
         height: 50,
@@ -400,7 +380,6 @@ const styles = StyleSheet.create({
         width: 65,
         borderWidth: 1,
         borderRadius: 15,
-        // padding: 7,
         borderColor: COLORS.primary,
         alignItems: 'center',
     },
@@ -408,7 +387,6 @@ const styles = StyleSheet.create({
         width: 125,
         borderWidth: 1,
         borderRadius: 15,
-        // padding: 7,
         borderColor: COLORS.primary,
         alignItems: 'center',
     },

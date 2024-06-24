@@ -74,7 +74,6 @@ async function getIncomeByMonthsChart(accountId) {
         result[key].negatives += income.amount;
       }
     });
-    // console.log(result);
     return { values: result };
   } catch (error) {
     return "Internal server error";
@@ -169,11 +168,9 @@ async function createTransaction(body) {
 async function getAllTransactionWithDate(body) {
   try {
     let transactions;
-    // console.log("body", body.period.split("l")[1]);
     if (body.period.split("l")[1]) {
       const start = new Date(body.period.split("l")[0]);
       const end = new Date(body.period.split("l")[1]);
-      // console.log("start", start, end);
 
       transactions = await prisma.income.findMany({
         where: {
@@ -197,7 +194,6 @@ async function getAllTransactionWithDate(body) {
     } else {
       const now = new Date();
       const start = new Date(body.period.split("l")[0]);
-      // console.log("start", start, now);
 
       transactions = await prisma.income.findMany({
         where: {
@@ -220,7 +216,6 @@ async function getAllTransactionWithDate(body) {
         },
       });
     }
-    // console.log("incomes", transactions);
     const transactionTypes = await prisma.income_types.findMany({
       select: {
         id: true,
@@ -241,25 +236,20 @@ async function getAllTransactionWithDate(body) {
         type: type.name,
         value: 0,
       }));
-    console.log("incomeResult", incomeResult);
-    console.log("outcomeResult", outcomeResult);
-    //
+
     let incomeNumber = 0;
     let outcomeNumber = 0;
     let income = 0;
     let outcome = 0;
-    //
+
     transactions.forEach((transaction) => {
-      console.log("transaction", transaction);
       const type = transactionTypes.find(
         (type) => type.name === transaction.income_type.name
       );
-      console.log("type", type);
       if (transaction.amount > 0) {
         incomeNumber += 1;
         income += transaction.amount;
         const index = incomeResult.findIndex((item) => item.type === type.name);
-        console.log("index", index);
         incomeResult[index].value += transaction.amount;
       } else {
         outcomeNumber += 1;
@@ -267,13 +257,9 @@ async function getAllTransactionWithDate(body) {
         const index = outcomeResult.findIndex(
           (item) => item.type === type.name
         );
-        console.log("index", index);
         outcomeResult[index].value += transaction.amount;
       }
     });
-    console.log("income", incomeResult);
-    console.log("outcome", outcomeResult);
-    // console.log("result", result);
 
     return {
       transactionValues: transactions,

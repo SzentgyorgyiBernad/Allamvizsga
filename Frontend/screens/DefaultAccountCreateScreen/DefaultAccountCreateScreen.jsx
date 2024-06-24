@@ -24,14 +24,6 @@ const DefaultAccountCreateScreen = ({navigation}) => {
       return <Text>Loading...</Text>;
     }
 
-    if (error) {
-      return <Text>Error loading currencies.</Text>;
-    }
-
-    if (currencies.values.length === 0) {
-      return <Text>No currencies found.</Text>;
-    }
-
     return (
         <MyDropDown items={currencies} setSelectedCurrency={setSelectedCurrency}/>
         );
@@ -49,7 +41,6 @@ const DefaultAccountCreateScreen = ({navigation}) => {
               </Text>
                 <View style={styles.currencyListContainer}>
                     {renderCurrencies()}
-                    {console.log(currencies)}
                 </View>
             </View>
             
